@@ -20,5 +20,7 @@ for (var index in window.modules) {
 var modules = ['ngCookies', 'ngResource', 'ui.bootstrap', 'ui.router'];
 modules = modules.concat(packageModules);
 
+console.log('angula Module registered ',modules);
+
 // Combined modules
 angular.module('mean', modules);

@@ -1,0 +1,46 @@
+.lexstart-example h1: {
+	background-color: purple
+}
+form label {
+	margin-bottom: .4em;
+	margin-top: 2px;
+}
+
+.btn {
+	padding: 6px 2px;
+}
+.form-group {
+	margin-bottom: 5px; 
+}
+
+.lex-panel {
+	border : 1px solid;
+}
+
+.custom-btn-width {
+    width: 120px !important;
+}
+
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.custom-file-input::before {
+  content: 'Select Company Documents To Upload';
+  display: inline-block;
+  background: #428bca;
+  border: 1px solid #428bca;
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+  white-space: nowrap;  
+  cursor: pointer;
+  font-weight: normal;
+  font-size: 14px;
+  color : #fff;
+}
+.custom-file-input:hover::before {
+  border-color: black;
+}
+.custom-file-input:active::before {
+  background: #428bca;
+}

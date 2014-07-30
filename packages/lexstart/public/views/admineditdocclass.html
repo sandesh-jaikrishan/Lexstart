@@ -1,0 +1,102 @@
+<div data-ng-controller="LexConfigAdminController" data-ng-init="loadEditDocClass()">
+	<div class="container">
+		<div class="col-md-10 col-md-offset-1">  
+				<div class="row page-header">
+					<h1><span class="glyphicon glyphicon-cog"></span> Edit Document Classification</h1>
+				</div>
+
+        <div class="row alert alert-success animated fadeIn" ng-show="responseMsg" role="alert">{{responseMsg}}</div>
+          
+
+        <div class="row" ng-if="error" ng-repeat="err in errorList">
+            <div class="alert alert-danger" role="alert">{{err}}</div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-1"><label class="control-label">Mnemonic:</label></div>
+            <div class="col-md-3"><input type="text" class="form-control" ng-model="docClass.doc_mnemonic" value="{{docClass.doc_mnemonic}}"></div>
+            <div class="col-md-2"></div>
+            <div class="col-md-1"><label class="control-label">Name:</label></div>
+            <div class="col-md-3"><input type="text" class="form-control" ng-model="docClass.doc_name" value="{{docClass.doc_name}}"></div>
+        </div> 
+        <div class="row">
+            <div class="col-md-1"><label class="control-label">Type:</label></div>
+            <div class="col-md-3"><input type="text" class="form-control" ng-model="docClass.doc_type" value="{{docClass.doc_type}}"></div>
+            <div class="col-md-2"></div>
+            <div class="col-md-1"><label class="control-label">Purpose:</label></div>
+            <div class="col-md-3"><input type="text" class="form-control" ng-model="docClass.purpose" value="{{docClass.purpose}}"></div>
+        </div>  
+        
+        <div class="row">
+            <div class="col-md-4">
+                <h4><span class="label label-primary">Master Attribute List</span></h4>
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-md-4"><h4><span class="label label-primary">Selected Doc Attribute</span></h4></div> 
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <table ng-table="attrMasterTblParams" show-filter="true" style="border:1px solid #000;" class="table table-striped">
+                  <tbody data-ng-repeat="attr in $data">
+                      <tr>
+                          <td><input type="checkbox" ng-model="attr.ticked"></td>
+
+                          <td data-title="'Table'" sortable="'table_name'" filter="{ 'table_name': 'text' }">
+                              {{attr.table_name}} 
+                          </td>
+                          <td data-title="'Attribute'" sortable="'attribute_name'" > 
+                              {{attr.attribute_name}} 
+                          </td>
+                      </tr>
+                  </tbody>
+                </table>                       
+            </div>
+            <div class="col-md-2">
+              <button type="button" class="btn btn-primary" style="width:100px;margin-top:120px" ng-click="selectAttr()">
+                  Select <i class="glyphicon glyphicon-arrow-right"></i>                
+              </button>
+              <button type="button" class="btn btn-primary" style="width:100px;margin-top:10px" ng-click="unselectAttr()">
+                  <i class="glyphicon glyphicon-arrow-left"></i> Un-Select                
+              </button>              
+            </div>
+            <div class="col-md-4">
+                <table style="border:1px solid #000;" class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Table Name</th>
+                      <th>Attribute</th>
+                      <th>Primary</th>
+                    </tr>
+                  </thead>
+                  <tbody data-ng-repeat="attr in selectedAttrList">
+                      <tr>
+                          <td><input type="checkbox" ng-model="attr.ticked"></td>
+                          <td data-title="'Table Name'" sortable="'table_name'" filter="{ 'table_name': 'text' }">
+                              {{attr.table_name}} 
+                          </td>
+                          <td data-title="'Attribute Name'" sortable="'attribute_name'" > 
+                              {{attr.attribute_name}} 
+                          </td>
+                          <td><input type="checkbox" ng-model="attr.isPrimary"></td>
+                      </tr>
+                  </tbody>
+                </table>                  
+            </div>
+        </div>  
+      <div class="row">
+		     <div class="col-md-3" >
+  		     	<button type="button" style="width:75px;" class="btn btn-primary" ng-click="saveDocClass()">
+  						<a style="color:#fff" href="">
+                  <i class="glyphicon glyphicon-save"></i>Save
+              </a>
+            </button>
+            <button type="button" style="width:75px;" class="btn btn-primary" ng-click="unsetDocClass()">
+              Back            		
+            </button>
+          </div>
+      </div>		
+		</div>			
+  </div>
+</div>

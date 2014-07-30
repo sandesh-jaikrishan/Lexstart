@@ -1,0 +1,42 @@
+<div data-ng-controller="LexstartController" data-ng-init="load()">
+	<div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6">
+      <!--Body content-->
+
+      <form name="complianceForm" role="form" data-ng-submit="postData(complianceForm.$valid)">
+		  <div class="form-group" ng-repeat="field in fields">
+
+		    <label for="{{field.label}}">{{field.label}}</label>
+		    
+		    <input ng-if="field.type === 'text'" type="{{field.type}}" class="form-control" ng-model="comp[field.findex]" placeholder="Enter {{field.label}}" data-toggle="tooltip" tooltip-placement="right" tooltip="{{field.htxt}}" ng-required="true"/>
+
+		    <input ng-if="field.type === 'file'" ng-file-select type="file" testAttr="{{field.findex}} " multiple/>
+		    
+		    <ul ng-if="field.type === 'file'" ng-repeat="f in uploader.queue">
+		    	<li ng-if="f.testattr === field.findex">
+		    		{{f.file.name}} : {{f.testattr}} : {{ f.file.size/1024/1024|number:2 }} MB 
+		    	</li>
+		    </ul>	
+		    
+		    <textarea ng-if="field.type === 'textarea'" type="{{field.type}}" class="form-control" ng-model="comp[field.findex]" tooltip="{{field.htxt}}" placeholder="Enter {{field.label}}"/>
+		    
+		    <select ng-if="field.type === 'select'" tooltip="{{field.htxt}}" class="form-control" ng-model="comp[field.findex]" ng-required="true">
+      			<option ng-repeat="c in field.options">{{c.val}}</option>
+    		</select>
+    		
+    		<div ng-message="complianceForm.{{field.findex}}.$error.required" style="color:maroon">Mandatory to fill the field</div>
+
+
+		  </div>
+		  
+		  <button type="submit" class="btn btn-default" ng-click="listFiles()">Submit</button>
+	  </form>	  
+        
+          
+        
+
+      </div>
+    </div>
+  </div>
+</div>

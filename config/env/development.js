@@ -1,10 +1,13 @@
 'use strict';
 
 module.exports = {
-  db: 'mongodb://localhost/mean-dev',
-  app: {
-    name: 'MEAN - FullStack JS - Development'
+  db: 'mongodb://localhost/lexstart',
+  clean : {
+    debug : true
   },
+  app: {
+        name: 'Lexstart'
+    },
   facebook: {
     clientID: 'APP_ID',
     clientSecret: 'APP_SECRET',
@@ -30,12 +33,12 @@ module.exports = {
     clientSecret: 'SECRET_KEY',
     callbackURL: 'http://localhost:3000/auth/linkedin/callback'
   },
-  emailFrom: 'SENDER EMAIL ADDRESS', // sender address like ABC <abc@example.com>
+  emailFrom: 'ABC <sandesh.jaikrishan@gmail.com>', // sender address like ABC <abc@example.com>
   mailer: {
-    service: 'SERVICE_PROVIDER',
+    service: 'Gmail',
     auth: {
-      user: 'EMAIL_ID',
-      pass: 'PASSWORD'
+      user: 'sandesh.jaikrishan@gmail.com',
+      pass: 'adesh617'
     }
   }
 };

@@ -1,0 +1,69 @@
+<div data-ng-controller="LexRegistrationCtrl" data-ng-init="loadRegisterInterestForm()">
+	<div class="container">
+		<div class="col-md-6 col-md-offset-3">  
+      <!--Body content-->
+
+		    <div class="row page-header">
+				<h1><span class="glyphicon glyphicon-user"></span> Register Interest</h1>
+			</div>
+
+				<!-- SHOW ERROR/SUCCESS MESSAGES -->
+			<div id="messages"></div>
+
+			<p>I am interested in learning more about Lexstart services. Please contact me on following phone number/Email.</p>
+
+		    <form name="registerForm" role="form" data-ng-submit="postRegisterInterest(registerForm.$valid)">
+				<div class="form-group">
+
+				    <label for="name" class="col-sm-2 control-label">Name</label>
+				    <div class="col-sm-10">
+				    	<input id ="name" type="text" class="form-control" ng-model="prospect.name" placeholder="Enter Name" ng-required="true"/>
+				    </div>	
+
+				  </div>  
+
+				  <div class="form-group">
+
+				    <label for="email" class="col-sm-2 control-label">Email</label>
+				    <div class="col-sm-10">
+				    	<input id ="email" type="text" class="form-control" ng-model="prospect.email" placeholder="Enter Email" ng-required="true"/>
+				    </div>	
+				  </div>  
+
+				  <div class="form-group">
+
+				    <label for="phone" class="col-sm-2 control-label">Phone</label>
+				    <div class="col-sm-10">
+				    	<input id ="phone" type="text" class="form-control" ng-model="prospect.phone" placeholder="Enter Phone Number" ng-required="true"/>
+				    </div>	
+				  </div>  
+
+				  <div>
+				    <label for="phone" class="col-sm-2 control-label">I am a </label>
+				    <div class="col-sm-10">
+					    <label>
+					    	<input type="checkbox" ng-model="prospect.opt1"/> Entrepreuneur
+					    </label>
+					    <br/>
+					    <label>
+					    	<input type="checkbox" ng-model="prospect.opt2"/> Startup Entity
+					    </label>
+					    <br/>
+					    <label>
+					    	<input type="checkbox" ng-model="prospect.opt3"/> Student
+					    </label>
+					    <br/>
+					    <label>
+					    	<input type="checkbox" ng-model="prospect.opt4"/> Investor
+					    </label>	
+					    <br/>		
+					    </div>	    
+				  </div>  		  
+				  <div class="form-group">
+				  		<button type="submit" class="btn btn-primary" style="width:75px;margin: 10px;" ng-required="true">Register</button>
+				  </div>		
+			  </form>	  
+			</div>
+    	</div>
+  	</div>
+</div>

@@ -4,12 +4,15 @@
       "bower_components/build/css/dist.min.css": []
     },
     "js": {
-      "bower_components/build/js/dist.min.js": [
+        "bower_components/build/js/dist.min.js": [
         "bower_components/jquery/dist/jquery.min.js",
         "bower_components/angular/angular.js",
         "bower_components/angular-mocks/angular-mocks.js",
         "bower_components/angular-cookies/angular-cookies.js",
         "bower_components/angular-resource/angular-resource.js",
+		    "bower_components/angular-file-upload/angular-file-upload.js",                
+        "bower_components/ng-table/ng-table.js",
+        "bower_components/multiselect/angular-multi-select.js",
         "bower_components/angular-ui-router/release/angular-ui-router.js",
         "bower_components/angular-bootstrap/ui-bootstrap.js",
         "bower_components/angular-bootstrap/ui-bootstrap-tpls.js"

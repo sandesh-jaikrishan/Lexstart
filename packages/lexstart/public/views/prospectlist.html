@@ -1,0 +1,101 @@
+<div data-ng-controller="LexAdminController" data-ng-init="loadProspects()">
+	<div class="container">
+		<div class="col-md-10 col-md-offset-1">  
+				<div class="page-header">
+					<h1><span class="glyphicon glyphicon-user"></span>Manage Prospect List</h1>
+				</div>
+
+				<div class="alert alert-success animated fadeIn" ng-show="responseMsg" role="alert">{{responseMsg}}</div>
+  				
+
+				<div ng-if="error" ng-repeat="err in errorList">
+    				<div class="alert alert-danger" role="alert">{{err}}</div>
+  				</div>
+  				
+  				<table ng-table="tableParams" show-filter="true" class="table table-striped">
+					<tbody data-ng-repeat="prospect in $data">
+  					<tr ng-show="editId!==prospect.regn_token" ng-if="editId!==prospect.regn_token">
+	  					<td data-title="'Name'" sortable="'name'" filter="{ 'name': 'text' }"> 
+	  						{{prospect.name}} 
+	  					</td>
+	  					<td data-title="'Email'" sortable="'email'"> 
+	  						 <i class="glyphicon glyphicon-envelope"></i> {{prospect.email}}
+	  					</td>
+	  					<td data-title="'Phone'" sortable="'phone'" > 
+	  						<i class="glyphicon glyphicon-phone-alt"></i> {{prospect.phone}} 
+	  					</td>
+	  					<!--
+	  					<td data-title="'Type'" sortable="'prospect_type'"> 
+	  						<!--{{prospect_type_list[prospect.prospect_type].type}}-->
+	  					<!--	
+	  						{{getProspectTypeName(prospect.prospect_type)}}
+	  					</td>
+	  					-->
+	  					<td data-title="'Status'" sortable="'prospect_status'"> 
+	  						<!--{{prospect_type_list[prospect.prospect_type].type}}-->
+	  						{{getProspectStatusName(prospect.prospect_status)}}
+	  					</td>
+
+	  					<td data-title="''"> 
+	  						<button type="button" class="btn btn-primary" id="viewRowBtn{{prospect.regn_token}}" style="width:75px;" ng-click="viewProspect(prospect)">View</button>
+	  						<button type="button" ng-show="prospect.prospect_status===1" class="btn btn-primary" id="editRowBtn{{prospect.regn_token}}" style="width:75px;" ng-click="editProspect(prospect)">Verify</button>
+	  						<button type="button" ng-show="prospect.prospect_status===2" class="btn btn-primary" id="editRowBtn{{prospect.regn_token}}" style="width:75px;" ng-click="createAccount(prospect)">Create Account</button>
+                    	</td>
+  					</tr>
+  					<tr ng-show="editId===prospect.regn_token" ng-if="editId===prospect.regn_token">
+  						<td colspan="5"> 
+  							<table class="noborder">
+							    <tr>
+							        <td style="width:20px;padding-bottom: 5px;"><label class="control-label">Name:</label></td>
+							        <td style="width:300px;padding-bottom: 5px;"><input type="text" class="form-control" ng-model="prospect.name" value="{{prospect.name}}" ng-disabled="!editFlag"></td>
+							        <td style="width:20px;padding-bottom: 5px;" colspan="1"></td>
+							        <td style="width:20px;padding-bottom: 5px;"><label class="control-label">Email:</label></td>
+							        <td style="width:300px;padding-bottom: 5px;"><input type="text" class="form-control" ng-model="prospect.email" name="email" value="{{prospect.email}}" ng-disabled="!editFlag"></td>
+							        
+							    </tr>
+							    <tr>
+							        <td style="width:150px;padding-bottom: 5px;"><label class="control-label">Phone:</label></td>
+							        <td style="width:150px;padding-bottom: 5px;"><input type="text" class="form-control" name="phone" ng-model="prospect.phone" value="{{prospect.phone}}" ng-disabled="!editFlag"></td>
+							        <td style="width:150px;padding-bottom: 5px;" colspan="1"></td>
+							        <td style="width:150px;padding-bottom: 5px;"><label class="control-label">Type:</label></td>
+							        <td style="width:150px;padding-bottom: 5px;">
+							        	<select class="form-control" ng-model="prospect.type" ng-options="ptype.name for ptype in prospect_type_list" ng-disabled="!editFlag"/>
+							        </td>							        
+							    </tr>
+							    <tr>
+							        <td style="width:150px;padding-bottom: 5px;"><label class="control-label">Company:</label></td>
+							        <td style="width:150px;padding-bottom: 5px;"><input type="text" class="form-control" name="company" ng-model="prospect.company" value="{{prospect.company}}" ng-disabled="!editFlag"></td>
+							        <td style="width:150px;padding-bottom: 5px;" colspan="1"></td>
+							        <td style="width:150px;padding-bottom: 5px;"><label class="control-label">CIN:</label></td>
+							        <td style="width:150px;padding-bottom: 5px;"><input type="text" class="form-control" name="cin" ng-model="prospect.cin" value="{{prospect.cin}}" ng-disabled="!editFlag"></td>						        
+							    </tr>
+							    <tr>
+							        <td style="width:150px;padding-bottom: 5px;"><label class="control-label">Status:</label></td>
+							        <td style="width:150px;padding-bottom: 5px;">
+							        	<select class="form-control" ng-model="prospect.status" ng-options="pstatus.name for pstatus in prospect_status_list" disabled/>										    		        
+							        </td>
+							        <td colspan="3" style="width:150px;padding-bottom: 5px;"></td>
+							    </tr>
+							    <tr>
+							        <td style="width:150px;padding-bottom: 5px;"><label class="control-label">Notes:</label></td>
+							        <td colspan="4"><textarea class="form-control" ng-model="prospect.notes" name="notes" value="{{prospect.notes}}" ng-disabled="!editFlag"/></td>
+							    </tr>
+							    <tr>
+							    	<td colspan="5">
+							    	<button type="button" ng-show="editFlag" class="btn btn-primary" style="width:75px;margin: 10px;" value=" save " ng-click="updateProspect(prospect,2)"> Save</button>
+							    	<button type="button" ng-show="editFlag" class="btn btn-primary" style="width:75px;margin: 10px;" value=" save " ng-click="updateProspect(prospect,1)"> Save Draft</button>
+							    	<button type="button" ng-show="editFlag" class="btn btn-primary" style="width:75px;margin: 10px;" value=" save " ng-click="updateProspect(prospect,5)"> Close </button>
+							    	<button type="button" class="btn btn-primary" style="width:75px;margin: 10px;" value=" cancel" ng-click="setEditId(-1)"> Cancel </button>							    	
+							    	</td>
+							    	
+							    </tr>
+							</table>
+  						</td>
+  					</tr>
+
+
+  					</tbody>
+				</table>
+    	</div>
+  	</div>
+</div>

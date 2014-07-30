@@ -1,3 +1,205 @@
 <section data-ng-controller="IndexController">
-  <h1 mean-token="'home-default'">This is the home view</h1>
+    <div class="container">
+    		<div class="row">
+		    <div class="col-md-7 col-md-offset-1">
+<!--
+		    	<div id="carousel-home" class="carousel slide" data-ride="carousel" data-interval="2000">
+				  <ol class="carousel-indicators">
+				    <li data-target="#carousel-home" data-slide-to="0" class="active"></li>
+				    <li data-target="#carousel-home" data-slide-to="1"></li>
+				    <li data-target="#carousel-home" data-slide-to="2"></li>
+				  </ol>
+
+				  <div class="carousel-inner">
+				    <div class="item active">
+				      <img src="/public/system/assets/img/lexstart/img1.jpg">
+				      <div class="carousel-caption">
+				        Affordable Legal Services for Startups
+				      </div>
+				    </div>	
+				    <div class="item">
+				      <img src="/public/system/assets/img/lexstart/img2.jpg">
+				      <div class="carousel-caption">
+				        Helping companies get investment ready
+				      </div>
+				    </div>	
+				    <div class="item">
+				      <img src="/public/system/assets/img/lexstart/img3.jpg">
+				      <div class="carousel-caption">
+				        Helping companies stay legally compliant
+				      </div>
+				    </div>				    
+				  </div>
+
+				  <a class="left carousel-control" href="#carousel-home" role="button" data-slide="prev">
+				    <span class="glyphicon glyphicon-chevron-left"></span>
+				  </a>
+				  <a class="right carousel-control" href="#carousel-home" role="button" data-slide="next">
+				    <span class="glyphicon glyphicon-chevron-right"></span>
+				  </a>
+				</div>
+				-->
+				<div>
+				  <div style="height: 305px">
+				    <carousel interval="2000">
+				      <slide active="slide.active">
+				        <img ng-src="/packages/system/public/assets/img/lexstart/img1.jpg" style="margin:auto;">
+				        <div class="carousel-caption">
+				          <h4>Lexstart</h4>
+				          <p>Affordable Legal Services for Startup</p>
+				        </div>
+				      </slide>
+				      <slide>
+				        <img ng-src="/packages/system/public/assets/img/lexstart/img2.jpg" style="margin:auto;">
+				        <div class="carousel-caption">
+				          <h4>Lexstart</h4>
+				          <p>Helping you achieve Investment readiness</p>
+				        </div>
+				      </slide>
+				      <slide>
+				        <img ng-src="/packages/system/public/assets/img/lexstart/img3.jpg" style="margin:auto;">
+				        <div class="carousel-caption">
+				          <h4>Lexstart</h4>
+				          <p>Helping you achieve MCA compliance</p>
+				        </div>
+				      </slide>
+				    </carousel>
+				  </div>				  
+				</div>
+
+		    </div>
+		    <div class="col-md-3 ">
+		    	<div style="height: 305px">
+				    <accordion>
+				        <accordion-group is-open="">
+				      		<accordion-heading>
+			        			Want Us to Contact You?
+			        		</accordion-heading>	
+			        		<div class="col-md-10 col-md-offset-1">
+			        		<form class="form">
+	      	        			<div class="row form-group">
+								  	<label for="" 
+								    	   class="control-label">Email</label>
+								    <input type="text" class="form-control"  placeholder="Enter Email" ng-required="true"/>
+								</div>
+
+								<div class="row form-group">
+								  	<label for="" 
+								    	   class="control-label">Phone Number</label>
+								    <input type="text" class="form-control"  placeholder="Enter Phone" ng-required="true"/>
+								</div>
+
+								<div class="row form-group">
+							     	<button type="button" class="btn btn-primary">
+				  						<a style="color:#fff" href="">
+			                        		<i class="glyphicon glyphicon-arrow-up"></i>Submit
+			                    		</a>
+		                    		</button>			                    		
+
+								</div>			    
+
+
+								    
+			        		</form>
+			        		</div>
+
+				     	</accordion-group>
+				     	<accordion-group is-open="">
+				      		<accordion-heading>
+			        			Chat Now
+			        		</accordion-heading>	
+			        		<div class="col-md-10 col-md-offset-1">
+			        		<form class="form">
+	      	        		
+			        			<div class="row form-group">
+								  	<label for="" 
+								    	   class="control-label">Message</label>
+								    <input type="textarea" class="form-control"  placeholder="" ng-required="true"/>
+								</div>
+
+								<div class="row form-group">
+							     	<button type="button" class="btn btn-primary">
+				  						<a style="color:#fff" href="">
+			                        		<i class="glyphicon glyphicon-arrow-up"></i>Submit
+			                    		</a>
+		                    		</button>			                    		
+
+								</div>		
+								</form>
+			        		</div>
+				     	</accordion-group>
+				     	<accordion-group is-open="">
+				      		<accordion-heading>
+			        			Whats New ?<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+			        		</accordion-heading>	
+
+			        		<ul style="list-style-type: none;padding-left: 0;">
+			        			<li ng-class="" style="border-bottom:.5px solid #f5f5f5;">
+          							<a href=''>Mandatory Information required now on your Letter head.</a>
+      							</li>
+      							<li class="divider-vertical"></li>        
+      							<li ng-class="">
+          							<a href=''>Fund Raising? Get your Investment Readiness Score.</a>
+      							</li>
+			        		</ul>
+
+				     	</accordion-group>
+				     	<accordion-group is-open="">
+				      		<accordion-heading>
+			        			Upcoming Events
+			        		</accordion-heading>	
+
+			        		<ul>
+			        			<li ng-class="">
+	      							<a href=''>Mandatory Information required now on your Letter head.</a>
+	  							</li>
+	  							<li ng-class="">
+	      							<a href=''>Fund Raising? Get your Investment Readiness Score.</a>
+	  							</li>
+			        		</ul>
+
+			     		</accordion-group>
+				    </accordion> 	
+				</div>
+		    </div>
+		 </div> 
+	<div class="row">
+		    <div class="col-md-4 col-md-offset-1">
+				<accordion>
+			        <accordion-group is-open="true">
+			      		<accordion-heading>
+		        			Blog
+		        		</accordion-heading>	
+
+		        		<ul>
+		        			<li ng-class="">
+      							<a href=''>Mandatory Information required now on your Letter head.</a>
+  							</li>
+  							<li ng-class="">
+      							<a href=''>Fund Raising? Get your Investment Readiness Score.</a>
+  							</li>
+		        		</ul>
+
+			     	</accordion-group>
+				</accordion> 	
+			</div>	    
+			<div class="col-md-3">
+				<accordion>
+			        <accordion-group is-open="true">
+			      		<accordion-heading>
+		        			Webinar Series
+		        		</accordion-heading>	
+
+		        		<ul>
+		        			<li ng-class="">
+      							<a href=''>Mandatory Information required now on your Letter head.</a>
+  							</li>
+  							<li ng-class="">
+      							<a href=''>Fund Raising? Get your Investment Readiness Score.</a>
+  							</li>
+		        		</ul>
+
+			     	</accordion-group>
+				</accordion> 	
+			</div>
 </section>

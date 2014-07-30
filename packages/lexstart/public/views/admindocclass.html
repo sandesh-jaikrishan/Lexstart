@@ -1,0 +1,112 @@
+<div data-ng-controller="LexConfigAdminController" data-ng-init="loadAdminDocClassification()">
+	<div class="container">
+		<div class="col-md-10 col-md-offset-1">  
+				<div class="page-header">
+					<h1><span class="glyphicon glyphicon-cog"></span> Manage Document Classification</h1>
+				</div>
+
+        <div class="alert alert-success animated fadeIn" ng-show="responseMsg" role="alert">{{responseMsg}}</div>
+          
+
+        <div ng-if="error" ng-repeat="err in errorList">
+            <div class="alert alert-danger" role="alert">{{err}}</div>
+        </div>
+        <table ng-table="tableParams" show-filter="true" class="table table-striped">
+  					<tbody data-ng-repeat="docClass in $data">
+  					<tr>
+	  					<td><input type="checkbox" ng-model="docClass.selected"> </td>
+              <td data-title="'Mnemonic'" sortable="'doc_mnemonic'" filter="{ 'doc_mnemonic': 'text' }"> 
+                  {{docClass.doc_mnemonic}}
+              </td>
+	  					<td data-title="'Name'">
+                {{docClass.doc_name}}
+              </td>
+              <td data-title="'Type'">
+                {{docClass.doc_type}}
+              </td>
+              <td data-title="'Purpose'">
+                {{docClass.purpose}}
+              </td>              
+	  					<td data-title="''"> 
+                 <button type="button" class="btn btn-primary" id="setEditClass{{docClass._id}}" style="width:75px;" ng-click="setEditClass(docClass)">
+                        <i class="glyphicon glyphicon-edit"></i>Edit                     
+                 </button>                
+              </td>
+  					</tr>
+            <!--
+            <tr ng-show="editId===docClass._id" ng-if="editId===docClass._id">
+              <td colspan="6"> 
+                <table style="border:1px solid #000;">
+                  <tr style="margin-left:5px;">
+                    
+                    <td style="width:50px;padding-bottom: 5px;"><label class="control-label">Mnemonic:</label></td>
+                    <td style="width:300px;padding-bottom: 5px;"><input type="text" class="form-control" ng-model="docClass.mnemonic" value="{{docClass.mnemonic}}"></td>
+                    <td style="width:100px;padding-bottom: 5px;" colspan="2"></td>
+                    <td style="width:50px;padding-bottom: 5px;"><label class="control-label">Name:</label></td>
+                    <td style="width:300px;padding-bottom: 5px;"><input type="text" class="form-control" ng-model="docClass.doc_name" 
+                               value="{{docClass.doc_name}}"></td>
+                  </tr>
+                  <tr>
+                    <td style="width:50px;padding-bottom: 5px;"><label class="control-label">Type:</label></td>
+                    <td style="width:300px;padding-bottom: 5px;"><input type="text" class="form-control" ng-model="docClass.doc_type" value="{{docClass.doc_type}}"></td>
+                    <td style="width:100px;padding-bottom: 5px;" colspan="2"></td>
+                    <td style="width:50px;padding-bottom: 5px;"><label class="control-label">Purpose:</label></td>
+                    <td style="width:300px;padding-bottom: 5px;"><input type="text" class="form-control" ng-model="docClass.purpose" value="{{docClass.purpose}}"></td>
+                  </tr>
+                  <tr>
+                    <td colspan="6"><h4>Add Doc Attribute</h4></td>                    
+                  </tr>
+
+
+                  <tr>
+                      <td colspan="2"> 
+                          <table style="border:1px solid #000;margin-left:5px;" ng-table="attrTblParams" show-filter="true" class="table table-striped">
+                            <tbody data-ng-repeat="attr in $data">
+                                <tr>
+                                    <td data-title="'Table Name'" sortable="'table_name'" filter="{ 'table_name': 'text' }"> 
+                                        {{attr.table_name}} 
+                                    </td>
+                                    <td data-title="'Attribute Name'" sortable="'attribute_name'" > 
+                                        {{attr.attribute_name}} 
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                          </table>
+                      </td>
+                      <td>
+                          <button type="button" ng-show="editFlag" class="btn btn-primary" style="width:75px;margin: 10px;" value=" save " ng-click="moveSelectedAttr()">Select</button>
+                      </td>
+                      <td colspan="3"> 
+                          <input type="text" class="form-control" ng-model="docClass.mnemonic" 
+                              value="{{docClass.mnemonic}}">
+                      </td>
+                  </tr>
+                  <tr>
+                    <td colspan="6">
+                      <button type="button" ng-show="editFlag" class="btn btn-primary" style="width:75px;margin: 10px;" value=" save " ng-click="updateDocClass(docClass)">Save</button>
+                      <button type="button" class="btn btn-primary" style="width:75px;margin: 10px;" value=" cancel" ng-click="setEditId(-1)">Cancel</button>                   
+                    </td>                    
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            -->
+  					</tbody>
+				</table>
+    	</div>
+
+    	<div class="col-md-10 col-md-offset-1">
+			  <div class="row">
+			    <div class="col-md-3" >
+			     	<button type="button" class="btn btn-primary" ng-click="addDocClassRow()">
+  						      		<i class="glyphicon glyphicon-plus"></i>Add
+            </button>
+            <button type="button" class="btn btn-primary">
+  						<i class="glyphicon glyphicon-trash"></i>Delete                		
+            </button>
+          </div>
+        </div>		
+		</div>			
+  	</div>
+</div>

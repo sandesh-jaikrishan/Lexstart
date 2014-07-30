@@ -1,0 +1,50 @@
+<div data-ng-controller="LexstartController" data-ng-init="loadDocsForTagging()">
+	<div class="container">
+		<div class="col-md-10 col-md-offset-1">  
+				<div class="page-header">
+					<h1><span class="glyphicon glyphicon-user"></span> Tag Documents & Initiate Action</h1>
+				</div>
+				<table class="table table-striped">
+  					<thead>
+                    <tr>
+    					<th>Name</th>
+    					<th>Classification</th>
+    					<th>Date</th>
+    					<th>Select Action</th>
+    					<th></th>
+    					
+
+  					</tr>
+  					</thead>
+  					<tbody>
+  					<tr data-ng-repeat="doc in docs">
+	  					<td> {{doc.name}} </td>
+	  					<td> {{doc.class}} </td>
+	  					<td> {{doc.date}} </td>
+	  					<td> 
+                        	<!--ng-model="{{fileList[item.file.name].tagVal}}"-->
+                        	<select class="form-control" ng-model="doc.action">
+							    <option ng-repeat="action in actions"
+							            value="{{action.value}}">
+							      {{action.name}}
+							    </option>
+							</select>                                	
+                        </td>
+	  					<td> 
+	  						<button type="button" class="btn btn-primary">
+		  						<a style="color:#fff" href="/#!/lexstart/tagdoc">
+	                        		<i class="glyphicon glyphicon-edit"></i>Edit Metadata
+	                    		</a>
+                    		</button>
+                    		<button type="button" class="btn btn-primary">
+		  						<a style="color:#fff" href="/#!/lexstart/initaction">
+	                        		<i class="glyphicon glyphicon-play"></i>Initiate Action
+	                    		</a>
+                    		</button>
+                    	</td>
+  					</tr>
+  					</tbody>
+				</table>
+    	</div>
+  	</div>
+</div>

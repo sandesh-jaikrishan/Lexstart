@@ -1,0 +1,53 @@
+<div data-ng-controller="LexstartController" data-ng-init="loadDocTaggingAttributes()">
+	<div class="container">
+	    <form class="form">
+	      	<div class="row">
+			    <div class="col-md-10 col-md-offset-1">
+				    <accordion>
+				        <accordion-group is-open="1==1">
+				      		<accordion-heading>
+			        			Initiate Company Incorporation Action  
+			        		</accordion-heading>			        		
+				      <!--Body content-->
+					      	  <div class="row form-group" ng-repeat="field in fields">
+					      	  	<div class="col-md-3" >
+						      	  	<label for="{{field.label}}" 
+								    	   class="control-label">{{field.label}}</label>	
+							    </div>	      
+							    <div class="col-md-5" >
+								    <input ng-if="field.type === 'text'" type="text" class="form-control" ng-model="field.value" placeholder="Enter {{field.label}}" data-toggle="tooltip" tooltip-placement="right" tooltip="{{field.htxt}}" ng-required="true"/>
+
+								    <textarea ng-if="field.type === 'textarea'" type="textarea" class="form-control" ng-model="field.value" tooltip="{{field.htxt}}"/>
+
+								    <select ng-if="field.type === 'select'" class="form-control" ng-model="field.value">
+									    <option ng-repeat="option in options"
+									            value="{{option.value}}">
+									      {{option.name}}
+									    </option>
+									</select>       
+							    </div>
+							    
+							  </div>
+						</accordion-group>
+		  			</accordion>	  
+				</div>
+				<div class="col-md-10 col-md-offset-1">
+					<div class="row">
+					     <div class="col-md-3" >
+					     	<button type="button" class="btn btn-primary">
+		  						<a style="color:#fff" href="/#!/lexstart/doclist">
+	                        		<i class="glyphicon glyphicon-arrow-up"></i>Ok
+	                    		</a>
+                    		</button>
+                    		<button type="button" class="btn btn-primary">
+		  						<a style="color:#fff" href="/#!/lexstart/doclist">
+	                        		<i class="glyphicon glyphicon-arrow-down"></i>Cancel
+	                    		</a>
+                    		</button>
+                    	</div>
+                    </div>		
+				</div>			    
+		   </div> 
+	    </form>
+  </div>
+</div>

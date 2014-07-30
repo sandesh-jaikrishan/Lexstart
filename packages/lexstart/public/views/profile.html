@@ -1,0 +1,210 @@
+<div data-ng-controller="LexstartController" data-ng-init="loadProfile()">
+	<div class="container">
+	    <form class="form">
+	      	<div class="row">
+			    <div class="col-md-10 col-md-offset-1">
+				    <accordion>
+				        <accordion-group ng-repeat="group in groups" >
+				      		<accordion-heading>
+			        			{{group.name}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+			        		</accordion-heading>			        		
+				      <!--Body content-->
+					      	  <div class="row form-group" ng-repeat="field in fields">
+
+					      	  	<div ng-if="group.id == field.groupId" class="col-md-3" >
+						      	  	<label ng-if="profile[field.findex].compliant === 'N'" 
+								    	   style="color:red" 
+								    	   for="{{field.label}}" 
+								    	   class="control-label">{{field.label}}</label>
+								    <label ng-if="profile[field.findex].compliant !== 'N'" 
+								    	   for="{{field.label}}" 
+								    	   class="control-label">{{field.label}}</label>	
+							    </div>	      
+							    
+							    <div ng-if="group.id == field.groupId" class="col-md-5" >
+					      	  	
+								    <input ng-if="field.type === 'text'" type="text" class="form-control" ng-model="profile[field.findex].value" placeholder="Enter {{field.label}}" data-toggle="tooltip" tooltip-placement="right" tooltip="{{field.htxt}}" ng-required="true"/>
+
+								    <textarea ng-if="field.type === 'textarea'" type="textarea" class="form-control" ng-model="profile[field.findex].value" tooltip="{{field.htxt}}"/>
+							    </div>
+							    <div ng-if="group.id == field.groupId" class="col-md-2">
+					      	  	
+								    <a ng-if="field.supportDocs === 'Y'" class="btn" href="/#!" tooltip="Support Docs">
+						                <i class="glyphicon glyphicon-paperclip"></i>
+						            </a>
+
+						            <a ng-if="profile[field.findex].compliant === 'N'" class="btn"  tooltip="Non-Compliant Info">
+						                <i class="glyphicon glyphicon-thumbs-down"></i>
+						            </a>
+
+						            <a ng-if="profile[field.findex].compliant === 'Y'" class="btn"  tooltip="Compliant Info">
+						                <i class="glyphicon glyphicon-thumbs-up"></i>
+						            </a>
+
+						            <a ng-if="profile[field.findex].compliant === 'N'" class="btn" ui-sref="{{field.cwf}}" tooltip="Initiate Compliance Workflow">
+						                <i class="glyphicon glyphicon-cog"></i>
+						            </a>
+
+						            		    
+								    <a ng-if="profile[field.findex].isMCAInfo === 'Y'" class="btn" href="/#!" tooltip="Info fetched from MCA site">
+						                <i class="glyphicon glyphicon-info-sign"></i>
+						            </a>	
+					            </div>	   	   
+							  </div>
+						  
+					
+		    			</accordion-group>
+		  			</accordion>	  
+				</div>
+
+			    <div class="col-md-10 col-md-offset-1">
+			    	<tabset justified="true">
+	    				<tab heading="Director">
+	    					<table class="table table-striped">
+			  					<thead>
+			                    <tr>
+			    					<th>Name</th>
+			    					<th>Appointment Date</th>
+			    					<th>Category</th>
+			    					<th>Type</th>
+			    					<th>Designation</th>
+			    					<th>Docs</th>
+			  					</tr>
+			  					</thead>
+			  					<tbody>
+			  					<tr data-ng-repeat="director in directors">
+				  					<td> {{director.name}} <i class="glyphicon glyphicon-thumbs-up"></i> </td>
+				  					<td> {{director.appt_date}} </td>
+				  					<td> {{director.category}} </td>
+				  					<td> {{director.type}} </td>
+				  					<td> {{director.designation}}</i></td>
+				  					<td> <i class="glyphicon glyphicon-thumbs-paperclip"></i></td>
+			  					</tr>
+			  					</tbody>
+							</table>
+	    				</tab>
+	    		
+	    				<tab heading="Shareholders">
+	    					<table class="table table-striped">
+			  					<thead>
+			                    <tr>
+			    					<th>Name</th>
+			    					<th>Shareholding %</th>
+			    					<th>Share Type</th>
+			    					<th>Conversion Date</th>
+			    					<th>Special Rights</th>
+			    					<th>Docs</th>
+			  					</tr>
+			  					</thead>
+			  					<tbody>
+			  					<tr data-ng-repeat="shareholder in shareholders">
+				  					<td> {{shareholder.name}} <i class="glyphicon glyphicon-thumbs-up"></i> </td>
+				  					<td> {{shareholder.shareholding_pct}} </td>
+				  					<td> {{shareholder.type_of_share}} </td>
+				  					<td> {{shareholder.conv_date}} </td>
+				  					<td> {{shareholder.special_right}}</i></td>
+				  					<td> <i class="glyphicon glyphicon-paperclip"></i></td>
+			  					</tr>
+			  					</tbody>
+	    					</table>
+	    				</tab>
+
+	    				<tab heading="Auditors">
+	    					<table class="table table-striped">
+			  					<thead>
+			                    <tr>
+			    					<th>Name</th>
+			    					<th>Audit Type</th>
+			    					<th>Appointment Date</th>
+			    					<th>Duration</th>
+			    					<th>Docs</th>
+			  					</tr>
+			  					</thead>
+			  					<tbody>
+			  					<tr data-ng-repeat="auditor in auditors">
+				  					<td> {{auditor.name}} <i class="glyphicon glyphicon-thumbs-up"></i> </td>
+				  					<td> {{auditor.ad_type}} </td>
+				  					<td> {{auditor.appt_date}} </td>
+				  					<td> {{auditor.duration}} </td>
+				  					<td> <i class="glyphicon glyphicon-paperclip"></i></td>
+			  					</tr>
+			  					</tbody>
+			  				</table>	
+	    					
+	    				</tab>
+	    				<tab heading="Shareholding Capital">
+	    					<table class="table table-striped">
+			  					<thead>
+			                    <tr>
+			    					<th>Name</th>
+			    					<th>Appointment Date</th>
+			    					<th>Category</th>
+			    					<th>Type</th>
+			    					<th>Designation</th>
+			    					<th>Docs</th>
+			  					</tr>
+			  					</thead>
+			  					<tbody>
+			  					<tr data-ng-repeat="director in directors">
+				  					<td> {{director.name}} <i class="glyphicon glyphicon-thumbs-up"></i> </td>
+				  					<td> {{director.appt_date}} </td>
+				  					<td> {{director.category}} </td>
+				  					<td> {{director.type}} </td>
+				  					<td> {{director.designation}}</i></td>
+				  					<td> <i class="glyphicon glyphicon-paperclip"></i></td>
+			  					</tr>
+			  					</tbody>
+	    					</table>
+	    				</tab>
+	    				
+	    				<tab heading="Documents">
+	    					<table class="table table-striped">
+			  					<thead>
+			                    <tr>
+			    					<th>Name</th>
+			    					<th>Classification</th>
+			    					<th>Tags</th>
+			    					<th>Date</th>
+			    					<th>Link</th>
+			  					</tr>
+			  					</thead>
+			  					<tbody>
+			  					<tr data-ng-repeat="doc in docs">
+				  					<td> {{doc.name}} </i> </td>
+				  					<td> {{doc.class}} </td>
+				  					<td> {{doc.tags}} </td>
+				  					<td> {{doc.date}} </td>
+				  					<td> <i class="glyphicon glyphicon-paperclip"></i></td>
+			  					</tr>
+			  					</tbody>
+	    					</table>
+	    				</tab>
+	    				<tab heading="Events">
+	    					<table class="table table-striped">
+			  					<thead>
+			                    <tr>
+			    					<th>Event Type</th>
+			    					<th>Purpose</th>
+			    					<th>Date</th>
+			    					<th>Status</th>			
+			    					<th>Note</th>			
+			  					</tr>
+			  					</thead>
+			  					<tbody>
+			  					<tr data-ng-repeat="event in events">
+				  					<td> {{event.type}} </i> </td>
+				  					<td> {{event.purpose}} </td>
+				  					<td> {{event.date}} </td>
+				  					<td> {{event.status}} </td>		
+				  					<td> {{event.pend_at}} </td>				  					
+			  					</tr>
+			  					</tbody>
+	    					</table>
+	    				</tab>	    				
+	  				</tabset>	
+	  					  
+			    </div>
+		   </div> 
+	    </form>
+  </div>
+</div>

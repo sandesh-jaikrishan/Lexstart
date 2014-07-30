@@ -1,0 +1,74 @@
+<div data-ng-controller="LexstartController" data-ng-init="loadAdminDocClassification()">
+	<div class="container">
+		<div class="col-md-10 col-md-offset-1">  
+				<div class="page-header">
+					<h1><span class="glyphicon glyphicon-cog"></span>Manage Document Classification</h1>
+				</div>
+				<table class="table table-striped">
+  					<thead>
+                    <tr>
+    					<th>Select</th>
+    					<th>Classification</th>
+    					<th>Type</th>
+    					<th>Purpose</th>
+    					<th>Action</th>
+  					</tr>
+  					</thead>
+  					<tbody>
+  					<tr data-ng-repeat="class in classes">
+	  					<td> <input type="checkbox" ng-model="class.selected"> </td>
+	  					<td><input ng-disabled="!class.selected" type="text" class="form-control" ng-model="class.name"/></td>
+	  					<td><input ng-disabled="!class.selected" type="text" class="form-control" ng-model="class.type"/></td>
+	  					<td><input ng-disabled="!class.selected" type="textarea" class="form-control" ng-model="class.purpose"/></td>
+	  					<td> 
+	  						<button type="button" class="btn btn-primary" ng-disabled="!class.selected">
+		  						<a style="color:#fff" href="">
+	                        		<i class="glyphicon glyphicon-edit"></i>Save
+	                    		</a>
+                    		</button>
+
+                    		<button type="button" class="btn btn-primary" ng-disabled="!class.selected">
+		  						<a style="color:#fff" href="">
+	                        		<i class="glyphicon glyphicon-wrench"></i>Add Action
+	                    		</a>
+                    		</button>
+                    	</td>
+  					</tr>
+  					<tr>
+						<table class="table table-striped">
+		  					<thead>
+		                    <tr>
+		    					<th>Action Name</th>
+		    					<th>Classification</th>
+		    					
+		  					</tr>
+		  					</thead>
+		  					<tbody>
+		  					<tr >
+			  					<td> Testing </td>
+			  					<td>Testing</td>				  					
+		  					</tr>
+		  					</tbody>
+						</table>
+
+					</tr>
+  					</tbody>
+				</table>
+    	</div>
+
+    	<div class="col-md-10 col-md-offset-1">
+			<div class="row">
+			     <div class="col-md-3" >
+			     	<button type="button" class="btn btn-primary" ng-click="addDocClassRow()">
+  						<a style="color:#fff" href="">
+                    		<i class="glyphicon glyphicon-plus"></i>Add
+                		</a>
+            		</button>
+            		<button type="button" class="btn btn-primary">
+  						<i class="glyphicon glyphicon-trash"></i>Delete                		
+            		</button>
+            	</div>
+            </div>		
+		</div>			
+  	</div>
+</div>

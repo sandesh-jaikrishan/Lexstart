@@ -1,5 +1,5 @@
 {
-  "name": "mean",
+  "name": "lexstart",
   "description": "MEAN.io: A fullstack JavaScript framework powered by MongoDB, ExpressJS, AngularJS, NodeJS.",
   "version": "0.4.0",
   "private": false,
@@ -49,6 +49,7 @@
     "express": "^4.2.0",
     "express-session": "^1.1.0",
     "express-validator": "^2.1.1",
+    "multiparty" :"^3.3.0",
     "forever": "^0.11.1",
     "gridfs-stream": "^0.5.1",
     "grunt-cli": "^0.1.13",
