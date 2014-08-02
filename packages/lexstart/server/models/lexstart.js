@@ -151,7 +151,10 @@ var DocumentsSchema = new Schema(
 {
 	doc_class_id : {type: Schema.Types.ObjectId, ref: 'doc_class' },
 	org_id : {type: Schema.Types.ObjectId, ref: 'organization' },
-	doc_date  : {type: Date}
+	doc_date  : {type: Date},
+	file_name : {type : String},
+	orig_file_name : {type : String},
+	file_size : {type : Number}
 },
 {
     collection : 'documents'

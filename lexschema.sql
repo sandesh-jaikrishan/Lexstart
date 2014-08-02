@@ -1,0 +1,1821 @@
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
+
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+CREATE SCHEMA IF NOT EXISTS `Lexstart` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+--  routine1
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `mydb`$$
+CREATE PROCEDURE `mydb`.`routine1` ()
+BEGIN
+
+END$$
+
+DELIMITER ;
+USE `Lexstart` ;
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`ADDRESSBOOK`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`ADDRESSBOOK` (
+  `ADDRESS_ID` VARCHAR(36) NOT NULL ,
+  `ADDRESS_LINE_1` VARCHAR(100) NULL DEFAULT NULL ,
+  `ADDRESS_LINE_2` VARCHAR(100) NULL DEFAULT NULL ,
+  `CITY` VARCHAR(100) NULL DEFAULT NULL ,
+  `STATE_CODE` CHAR(2) NULL DEFAULT NULL ,
+  `PIN_CODE` CHAR(6) NULL DEFAULT NULL ,
+  PRIMARY KEY (`ADDRESS_ID`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`ATTRIBUTE`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`ATTRIBUTE` (
+  `ATTRIBUTE_ID` VARCHAR(36) NOT NULL ,
+  `ATTRIBUTE_NAME` VARCHAR(100) NULL DEFAULT NULL ,
+  `TABLE_NAME` VARCHAR(45) NULL DEFAULT NULL ,
+  `COL_NAME` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`ATTRIBUTE_ID`) ,
+  UNIQUE INDEX `ATTRIBUTE_NAME_UNIQUE` (`ATTRIBUTE_NAME` ASC) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`PERSON`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`PERSON` (
+  `PERSON_ID` VARCHAR(36) NOT NULL ,
+  `FULL_NAME` VARCHAR(200) NULL DEFAULT NULL ,
+  `FIRST_NAME` VARCHAR(45) NULL DEFAULT NULL ,
+  `MIDDLE NAME` VARCHAR(45) NULL DEFAULT NULL ,
+  `LAST_NAME` VARCHAR(45) NULL DEFAULT NULL ,
+  `SALUTATION` VARCHAR(10) NULL DEFAULT NULL ,
+  `PAN` VARCHAR(10) NULL DEFAULT NULL ,
+  `DIN` VARCHAR(10) NULL DEFAULT NULL ,
+  `ADDRESS_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  `NATIONALITY` VARCHAR(45) NULL DEFAULT NULL ,
+  `DATE_OF_BIRTH`  DATE NULL DEFAULT NULL ,
+  `GENDER` CHAR(1) NULL DEFAULT NULL COMMENT 'M or F' ,
+  `FATHERS_FULL_NAME` VARCHAR(100) NULL DEFAULT NULL ,
+  PRIMARY KEY (`PERSON_ID`) ,
+  INDEX `PERSON_ADDRESS_idx` (`ADDRESS_ID` ASC) ,
+  CONSTRAINT `PERSON_ADDRESS`
+    FOREIGN KEY (`ADDRESS_ID` )
+    REFERENCES `Lexstart`.`ADDRESSBOOK` (`ADDRESS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`ORGANIZATION`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`ORGANIZATION` (
+  `ORG_ID` VARCHAR(36) NOT NULL DEFAULT '' ,
+  `ORG_NAME` VARCHAR(100) NOT NULL ,
+  `INC_DT`  DATE NOT NULL ,
+  `PAN` VARCHAR(20) NOT NULL ,
+  `TAN` VARCHAR(20) NOT NULL ,
+  `CIN` VARCHAR(24) NOT NULL ,
+  `REG_NO` INT(10) NULL DEFAULT NULL ,
+  `ACTIVITY_DSC` CHAR(5) NULL DEFAULT NULL ,
+  `ORG_TYPE` VARCHAR(100) NULL DEFAULT NULL COMMENT 'Private Limited' ,
+  `ROC_CODE` INT(2) NULL DEFAULT NULL COMMENT 'There are 22 ROC Regions that are to be used for reference' ,
+  `AUTH_CAP` DECIMAL(19,2) NULL DEFAULT NULL ,
+  `PAID_UP_CAP` DECIMAL(19,2) NULL DEFAULT NULL ,
+  `DATE_LAST_AGM`  DATE NULL DEFAULT NULL ,
+  `DATE_LAST_BS`  DATE NULL DEFAULT NULL ,
+  `LAST_UPD_DT`  DATE NULL DEFAULT NULL ,
+  `MAILING_ADD` BLOB NULL DEFAULT NULL ,
+  `STATE_ID` BINARY(1) NULL DEFAULT NULL ,
+  `EMAIL_ID` VARCHAR(45) NULL DEFAULT NULL ,
+  `KEY_CONTACT_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  `REG_OFF_ADD_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  `MAILING_ADD_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  PRIMARY KEY (`ORG_ID`) ,
+  UNIQUE INDEX `CIN_UNIQUE` (`CIN` ASC) ,
+  UNIQUE INDEX `PAN_UNIQUE` (`PAN` ASC) ,
+  UNIQUE INDEX `TAN_UNIQUE` (`TAN` ASC) ,
+  INDEX `ORG_CONTACT_idx` (`KEY_CONTACT_ID` ASC) ,
+  INDEX `ORG_REG_OFF_ADD_idx` (`REG_OFF_ADD_ID` ASC) ,
+  INDEX `ORG_MAILING_ADD_idx` (`MAILING_ADD_ID` ASC) ,
+  CONSTRAINT `ORG_CONTACT`
+    FOREIGN KEY (`KEY_CONTACT_ID` )
+    REFERENCES `Lexstart`.`PERSON` (`PERSON_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `ORG_MAILING_ADD`
+    FOREIGN KEY (`MAILING_ADD_ID` )
+    REFERENCES `Lexstart`.`ADDRESSBOOK` (`ADDRESS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `ORG_REG_OFF_ADD`
+    FOREIGN KEY (`REG_OFF_ADD_ID` )
+    REFERENCES `Lexstart`.`ADDRESSBOOK` (`ADDRESS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`AUDITOR`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`AUDITOR` (
+  `ORG_ID` VARCHAR(36) NOT NULL ,
+  `AD_TYPE` INT(1) NULL DEFAULT NULL ,
+  `NAME` VARCHAR(500) NULL DEFAULT NULL ,
+  `PAN` VARCHAR(10) NULL DEFAULT NULL ,
+  `ADDRESS_ID` VARCHAR(24) NOT NULL ,
+  `MEMBERSHIP_NO` VARCHAR(6) NULL DEFAULT NULL ,
+  `FIRM_REG_NO` VARCHAR(7) NULL DEFAULT NULL ,
+  `APPT_DATE`  DATE NOT NULL ,
+  `RESGN_DATE`  DATE NULL DEFAULT NULL ,
+  `RESGN_TYPE` INT(1) NULL DEFAULT NULL ,
+  `APPT_DURATION` INT(11) NULL DEFAULT NULL ,
+  INDEX `AUDITOR_ORG_FK_idx` (`ORG_ID` ASC) ,
+  INDEX `AUDITOR_ADDRESS_FK_idx` (`ADDRESS_ID` ASC) ,
+  CONSTRAINT `AUDITOR_ORG_FK`
+    FOREIGN KEY (`ORG_ID` )
+    REFERENCES `Lexstart`.`ORGANIZATION` (`ORG_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `AUDITOR_ADDRESS_FK`
+    FOREIGN KEY (`ADDRESS_ID` )
+    REFERENCES `Lexstart`.`ADDRESSBOOK` (`ADDRESS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`BOARDMEMBER`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`BOARDMEMBER` (
+  `BM_ID` VARCHAR(23) NOT NULL ,
+  `PERSON_ID` VARCHAR(24) NOT NULL ,
+  `ORG_ID` VARCHAR(24) NOT NULL ,
+  `APPT_DATE`  DATE NOT NULL ,
+  `RESGN_DATE`  DATE NULL DEFAULT NULL ,
+  `BM_CATEGORY_ID` INT(2) NOT NULL COMMENT 'Promoter OR Professional OR Independent' ,
+  `BM_TYPE_ID` INT(2) NULL DEFAULT NULL COMMENT 'Whether Chairman, Executive director, Non-executive director' ,
+  `BM_DESIGNATION_CODE` INT(2) NULL DEFAULT NULL COMMENT 'Director OR Managing Director OR Alternate Director OR Additional Director OR Director Appointed in Casual Vacancy OR Nominee Director OR Whole-time Director' ,
+  `SHAREHOLDING_ID` VARCHAR(24) NULL DEFAULT NULL ,
+  `EVENT_ID` VARCHAR(23) NULL DEFAULT NULL ,
+  `DOC_ID` VARCHAR(23) NULL DEFAULT NULL ,
+  `NOMINEE_COMPANY` VARCHAR(200) NULL DEFAULT NULL ,
+  `ALT_BM_ID` VARCHAR(23) NULL DEFAULT NULL ,
+  `DSC_AVAILABLE` BINARY(1) NULL DEFAULT NULL ,
+  PRIMARY KEY (`BM_ID`) ,
+  INDEX `BM_ORG_FK_idx` (`ORG_ID` ASC) ,
+  INDEX `BM_PERSON_FK_idx` (`PERSON_ID` ASC) ,
+  CONSTRAINT `BM_ORG_FK`
+    FOREIGN KEY (`ORG_ID` )
+    REFERENCES `Lexstart`.`ORGANIZATION` (`ORG_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `BM_PERSON_FK`
+    FOREIGN KEY (`PERSON_ID` )
+    REFERENCES `Lexstart`.`PERSON` (`PERSON_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`DOC_CLASS`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`DOC_CLASS` (
+  `DOC_CLASS_ID` VARCHAR(36) NOT NULL ,
+  `DOC_NAME` VARCHAR(100) NOT NULL ,
+  `DOC_TYPE` VARCHAR(45) NOT NULL ,
+  `PURPOSE` VARCHAR(100) NULL DEFAULT NULL ,
+  PRIMARY KEY (`DOC_CLASS_ID`) ,
+  UNIQUE INDEX `DOC_NAME_UNIQUE` (`DOC_NAME`,`PURPOSE`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`DOCUMENTS`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`DOCUMENTS` (
+  `DOC_ID` VARCHAR(36) NOT NULL ,
+  `DOC_CLASS_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  `ORG_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  `DOC_DATE`  DATE NULL DEFAULT NULL ,
+  PRIMARY KEY (`DOC_ID`) ,
+  INDEX `DOC_ORG_REF_idx` (`ORG_ID` ASC) ,
+  INDEX `DOC_CLASS_REF_idx` (`DOC_CLASS_ID` ASC) ,
+  CONSTRAINT `DOC_CLASS_FK`
+    FOREIGN KEY (`DOC_CLASS_ID` )
+    REFERENCES `Lexstart`.`DOC_CLASS` (`DOC_CLASS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `DOC_ORG_FK`
+    FOREIGN KEY (`ORG_ID` )
+    REFERENCES `Lexstart`.`ORGANIZATION` (`ORG_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`DOC_CLASS_TAGS`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`DOC_CLASS_TAGS` (
+  `DOC_CLASS_ID` VARCHAR(36) NOT NULL ,
+  `ATTRIBUTE_ID` VARCHAR(36) NOT NULL ,
+  `REFERENCE_TYPE` CHAR(1) NULL DEFAULT NULL COMMENT 'PRIMARY OR SECONDARY' ,
+  PRIMARY KEY (`DOC_CLASS_ID`, `ATTRIBUTE_ID`) ,
+  INDEX `TAGS_DOC_CLASS_ATT_FK_idx` (`ATTRIBUTE_ID` ASC) ,
+  CONSTRAINT `TAGS_DOC_CLASS_ATT_FK`
+    FOREIGN KEY (`ATTRIBUTE_ID` )
+    REFERENCES `Lexstart`.`ATTRIBUTE` (`ATTRIBUTE_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `TAGS_DOC_CLASS_FK`
+    FOREIGN KEY (`DOC_CLASS_ID` )
+    REFERENCES `Lexstart`.`DOC_CLASS` (`DOC_CLASS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`DOC_TAGS`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`DOC_TAGS` (
+  `DOC_ID` VARCHAR(36) NOT NULL ,
+  `ATTRIBUTE_ID` VARCHAR(36) NOT NULL ,
+  `VALUE` BLOB NULL DEFAULT NULL ,
+  `VERIFIED` CHAR(1) NULL DEFAULT 'N' ,
+  PRIMARY KEY (`DOC_ID`, `ATTRIBUTE_ID`) ,
+  INDEX `TAG_ATT_FK_idx` (`ATTRIBUTE_ID` ASC) ,
+  CONSTRAINT `TAG_ATT_FK`
+    FOREIGN KEY (`ATTRIBUTE_ID` )
+    REFERENCES `Lexstart`.`ATTRIBUTE` (`ATTRIBUTE_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `TAG_DOC_FK`
+    FOREIGN KEY (`DOC_ID` )
+    REFERENCES `Lexstart`.`DOCUMENTS` (`DOC_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`EMAIL`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`EMAIL` (
+  `ADDRESS_ID` VARCHAR(36) NOT NULL ,
+  `EMAIL` VARCHAR(50) NOT NULL ,
+  `CLASSIFICATION` CHAR(3) NULL DEFAULT NULL COMMENT 'PERSONAL OR OFFICIAL OR RECORD' ,
+  PRIMARY KEY (`ADDRESS_ID`, `EMAIL`) ,
+  CONSTRAINT `EMAIL_ADDRESS_ID`
+    FOREIGN KEY (`ADDRESS_ID` )
+    REFERENCES `Lexstart`.`ADDRESSBOOK` (`ADDRESS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`LEGAL_ACTION_TYPE`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`LEGAL_ACTION_TYPE` (
+  `LEGAL_ACTION_TYPE_ID` VARCHAR(36) NOT NULL ,
+  `DOC_CLASS_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  `LEGAL_ACTION` VARCHAR(100) NULL DEFAULT NULL ,
+  PRIMARY KEY (`LEGAL_ACTION_TYPE_ID`) ,
+  UNIQUE INDEX `LEGAL_ACTION_UNIQUE` (`LEGAL_ACTION` ASC) ,
+  INDEX `ACTION_DOC_CLASS_FK_idx` (`DOC_CLASS_ID` ASC) ,
+  CONSTRAINT `ACTION_DOC_CLASS_FK`
+    FOREIGN KEY (`DOC_CLASS_ID` )
+    REFERENCES `Lexstart`.`DOC_CLASS` (`DOC_CLASS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`LEGAL_EVENT_CLASS`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`LEGAL_EVENT_CLASS` (
+  `LEGAL_EVENT_CLASS_ID` VARCHAR(36) NOT NULL ,
+  `LEGAL_EVENT_NAME` VARCHAR(100) NULL DEFAULT NULL ,
+  `PURPOSE` BLOB NULL DEFAULT NULL ,
+  `EVENT_TYPE` CHAR(1) NULL DEFAULT NULL COMMENT 'APPROVAL OR INTIMATION' ,
+  PRIMARY KEY (`LEGAL_EVENT_CLASS_ID`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`EVENT_ACTION_MAP`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`EVENT_ACTION_MAP` (
+  `LEGAL_EVENT_CLASS_ID` VARCHAR(36) NOT NULL ,
+  `LEGAL_ACTION_TYPE_ID` VARCHAR(36) NOT NULL ,
+  `SEQ_NO` INT(2) NOT NULL ,
+  `OPTION` CHAR(4) NULL DEFAULT 'BOTH' ,
+  `REQUIRED` CHAR(1) NULL DEFAULT 'N' ,
+  PRIMARY KEY (`LEGAL_EVENT_CLASS_ID`, `LEGAL_ACTION_TYPE_ID`, `SEQ_NO`) ,
+  INDEX `ACTION_TYPE_FK_idx` (`LEGAL_ACTION_TYPE_ID` ASC) ,
+  CONSTRAINT `ACTION_TYPE_FK`
+    FOREIGN KEY (`LEGAL_ACTION_TYPE_ID` )
+    REFERENCES `Lexstart`.`LEGAL_ACTION_TYPE` (`LEGAL_ACTION_TYPE_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `EVENT_CLASS_FK`
+    FOREIGN KEY (`LEGAL_EVENT_CLASS_ID` )
+    REFERENCES `Lexstart`.`LEGAL_EVENT_CLASS` (`LEGAL_EVENT_CLASS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`LEGAL_ACTIONS`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`LEGAL_ACTIONS` (
+  `LEGAL_ACTION_ID` VARCHAR(36) NOT NULL ,
+  `ACTION_DATE`  DATE NOT NULL ,
+  `ORG_ID` VARCHAR(36) NOT NULL ,
+  `LEGAL_ACTION_TYPE_ID` VARCHAR(36) NOT NULL ,
+  `LEGAL_EVENT_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  `SEQUENCE_NO` INT(2) NULL DEFAULT NULL ,
+  `OPTION` VARCHAR(4) NULL DEFAULT NULL ,
+  `MULTIPLE` BINARY(1) NULL DEFAULT NULL ,
+  PRIMARY KEY (`LEGAL_ACTION_ID`) ,
+  INDEX `ACTION_TYPE_FK_idx` (`LEGAL_ACTION_TYPE_ID` ASC) ,
+  INDEX `ACTION_ORG_FK_idx` (`ORG_ID` ASC) ,
+  CONSTRAINT `LEGAL_ACTION_ORG_FK`
+    FOREIGN KEY (`ORG_ID` )
+    REFERENCES `Lexstart`.`ORGANIZATION` (`ORG_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `LEGAL_ACTION_TYPE_FK`
+    FOREIGN KEY (`LEGAL_ACTION_TYPE_ID` )
+    REFERENCES `Lexstart`.`LEGAL_ACTION_TYPE` (`LEGAL_ACTION_TYPE_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`LEGAL_ACTION_TAGS`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`LEGAL_ACTION_TAGS` (
+  `LEGAL_ACTION_ID` VARCHAR(36) NOT NULL ,
+  `ATTRIBUTE_ID` VARCHAR(36) NOT NULL ,
+  `VALUE` BLOB NULL DEFAULT NULL ,
+  PRIMARY KEY (`LEGAL_ACTION_ID`, `ATTRIBUTE_ID`) ,
+  INDEX `TAGS_ATTRIBUTE_FK_idx` (`ATTRIBUTE_ID` ASC) ,
+  CONSTRAINT `TAGS_LEGAL_ACTION_FK`
+    FOREIGN KEY (`LEGAL_ACTION_ID` )
+    REFERENCES `Lexstart`.`LEGAL_ACTIONS` (`LEGAL_ACTION_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `TAGS_ATTRIBUTE_FK`
+    FOREIGN KEY (`ATTRIBUTE_ID` )
+    REFERENCES `Lexstart`.`ATTRIBUTE` (`ATTRIBUTE_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`LEGAL_ACTION_TYPE_TAGS`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`LEGAL_ACTION_TYPE_TAGS` (
+  `LEGAL_ACTION_TYPE_ID` VARCHAR(36) NOT NULL ,
+  `ATTRIBUTE_ID` VARCHAR(36) NOT NULL ,
+  `REFERENCE_TYPE` CHAR(1) NULL DEFAULT NULL ,
+  PRIMARY KEY (`LEGAL_ACTION_TYPE_ID`, `ATTRIBUTE_ID`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`LEGAL_EVENTS`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`LEGAL_EVENTS` (
+  `LEGAL_EVENT_ID` VARCHAR(36) NOT NULL ,
+  `ORG_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  `EVENT_DATE`  DATE NULL DEFAULT NULL ,
+  `LEGAL_EVENT_CLASS_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  PRIMARY KEY (`LEGAL_EVENT_ID`) ,
+  INDEX `LEGAL_EVENT_CLASS_FK_idx` (`LEGAL_EVENT_CLASS_ID` ASC) ,
+  INDEX `LEGAL_EVENT_ORG_FK_idx` (`ORG_ID` ASC) ,
+  CONSTRAINT `LEGAL_EVENT_ORG_FK`
+    FOREIGN KEY (`ORG_ID` )
+    REFERENCES `Lexstart`.`ORGANIZATION` (`ORG_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `LEGAL_EVENT_CLASS_FK`
+    FOREIGN KEY (`LEGAL_EVENT_CLASS_ID` )
+    REFERENCES `Lexstart`.`LEGAL_EVENT_CLASS` (`LEGAL_EVENT_CLASS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`MCA_EFORMS_CLASS`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`MCA_EFORMS_CLASS` (
+  `MCA_EFORM_CLASS_ID` VARCHAR(36) NOT NULL ,
+  `MCA_EFORM_NAME` VARCHAR(200) NULL DEFAULT NULL ,
+  `MCA_EFORM_URL` VARCHAR(200) NULL DEFAULT NULL ,
+  `MCA_EFORM_HELP_URL` VARCHAR(200) NULL DEFAULT NULL ,
+  `MCA_EFORM_PURPOSE` BLOB NULL DEFAULT NULL ,
+  `MCA_EFORM_VERSION_DATE`  DATE NULL DEFAULT NULL ,
+  `EFORM_DOC_CLASS_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  `COMPANIES_ACT_YEAR` INT(4) NULL DEFAULT NULL ,
+  PRIMARY KEY (`MCA_EFORM_CLASS_ID`) ,
+  INDEX `EFORM_DOC_CLASS_FK_idx` (`EFORM_DOC_CLASS_ID` ASC) ,
+  CONSTRAINT `EFORM_DOC_CLASS_FK`
+    FOREIGN KEY (`EFORM_DOC_CLASS_ID` )
+    REFERENCES `Lexstart`.`DOC_CLASS` (`DOC_CLASS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`MCA_EFORM`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`MCA_EFORM` (
+  `DOC_ID` VARCHAR(36) NOT NULL ,
+  `MCA_EFORM_CLASS_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  `SRN` VARCHAR(45) NULL DEFAULT NULL ,
+  `ORG_ID` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`DOC_ID`) ,
+  INDEX `EFORM_CLASS_FK_idx` (`MCA_EFORM_CLASS_ID` ASC) ,
+  INDEX `EFORM_ORG_FK_idx` (`ORG_ID` ASC) ,
+  CONSTRAINT `EFORM_DOC_FK`
+    FOREIGN KEY (`DOC_ID` )
+    REFERENCES `Lexstart`.`DOCUMENTS` (`DOC_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `EFORM_ORG_FK`
+    FOREIGN KEY (`ORG_ID` )
+    REFERENCES `Lexstart`.`ORGANIZATION` (`ORG_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `EFORM_CLASS_FK`
+    FOREIGN KEY (`MCA_EFORM_CLASS_ID` )
+    REFERENCES `Lexstart`.`MCA_EFORMS_CLASS` (`MCA_EFORM_CLASS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`ORG_PAST_NAMES`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`ORG_PAST_NAMES` (
+  `ORG_ID` VARCHAR(36) NOT NULL ,
+  `ORG_NAME` VARCHAR(100) NOT NULL ,
+  `CHANGE_DATE`  DATE NOT NULL ,
+  `DOC_ID` VARCHAR(36) NOT NULL ,
+  PRIMARY KEY (`ORG_ID`, `CHANGE_DATE`) ,
+  INDEX `ORG_NAME_FK_idx` (`ORG_ID` ASC) ,
+  CONSTRAINT `ORG_NAME_FK`
+    FOREIGN KEY (`ORG_ID` )
+    REFERENCES `Lexstart`.`ORGANIZATION` (`ORG_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`PHONE`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`PHONE` (
+  `ADDRESS_ID` VARCHAR(36) NOT NULL ,
+  `PHONE` VARCHAR(20) NOT NULL ,
+  `TYPE` CHAR(1) NULL DEFAULT NULL COMMENT 'MOBILE OR LANDLINE' ,
+  `CLASSIFICATION` CHAR(3) NULL DEFAULT NULL COMMENT 'PERSONAL OR OFFICIAL OR RECORD' ,
+  PRIMARY KEY (`ADDRESS_ID`, `PHONE`) ,
+  CONSTRAINT `ADDRESS_ID`
+    FOREIGN KEY (`ADDRESS_ID` )
+    REFERENCES `Lexstart`.`ADDRESSBOOK` (`ADDRESS_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`RESOLUTIONS`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`RESOLUTIONS` (
+  `RESOLUTION_ID` VARCHAR(36) NOT NULL COMMENT 'Notice, Date of dispatch, Resolution, Type, Purpose, Subject Matter, Date of passing,\rAuthority - Board of directors, Shareholders, Class of shareholders, Creditors\rType - Ordinary, Special, Requisite majority\rForm MG -14\rForm INC-28, SRN' ,
+  `ORG_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  `NOTICE_DOC_ID` VARCHAR(36) NULL DEFAULT NULL ,
+  `NOTICE_DISPACTH_DATE`  DATE NULL DEFAULT NULL ,
+  `RESOLUTION_TYPE` VARCHAR(36) NULL DEFAULT NULL COMMENT 'Type - Ordinary, Special, Requisite majority' ,
+  `RESOLUTION_AUTH` VARCHAR(45) NULL DEFAULT NULL COMMENT 'Authority - Board of directors, Shareholders, Class of shareholders, Creditors' ,
+  `PASSING_DATE`  DATE NULL DEFAULT NULL ,
+  `RESOLUTION_DOC_ID` VARCHAR(24) NULL DEFAULT NULL ,
+  PRIMARY KEY (`RESOLUTION_ID`) ,
+  INDEX `RES_DOC_FK_idx` (`RESOLUTION_DOC_ID` ASC) ,
+  INDEX `NOTICE_DOC_FK_idx` (`NOTICE_DOC_ID` ASC) ,
+  INDEX `RES_ORG_FK_idx` (`ORG_ID` ASC) ,
+  CONSTRAINT `NOTICE_DOC_FK`
+    FOREIGN KEY (`NOTICE_DOC_ID` )
+    REFERENCES `Lexstart`.`DOCUMENTS` (`DOC_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `RES_ORG_FK`
+    FOREIGN KEY (`ORG_ID` )
+    REFERENCES `Lexstart`.`ORGANIZATION` (`ORG_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `RES_DOC_FK`
+    FOREIGN KEY (`RESOLUTION_DOC_ID` )
+    REFERENCES `Lexstart`.`DOCUMENTS` (`DOC_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`RESOLUTION_PURPOSE`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`RESOLUTION_PURPOSE` (
+  `RESOLUTION_ID` VARCHAR(36) NOT NULL ,
+  `PURPOSE_ID` INT(2) NOT NULL ,
+  `PURPOSE` VARCHAR(45) NULL DEFAULT NULL ,
+  `SUBJECT_MATTER` BLOB NULL DEFAULT NULL ,
+  PRIMARY KEY (`PURPOSE_ID`, `RESOLUTION_ID`) ,
+  INDEX `PUR_RES_FK_idx` (`RESOLUTION_ID` ASC) ,
+  CONSTRAINT `PUR_RES_FK`
+    FOREIGN KEY (`RESOLUTION_ID` )
+    REFERENCES `Lexstart`.`RESOLUTIONS` (`RESOLUTION_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`RoC_OFFICES`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`RoC_OFFICES` (
+  `ROC_OFFICE` VARCHAR(45) NOT NULL ,
+  `ROC_OFFICE_NAME` VARCHAR(45) NOT NULL ,
+  `ROC_OFFICE_DESC` BLOB NULL DEFAULT NULL ,
+  `ROC_CODE` INT(2) NOT NULL AUTO_INCREMENT ,
+  PRIMARY KEY (`ROC_CODE`) )
+ENGINE = InnoDB
+AUTO_INCREMENT = 24
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`SHARECAPITAL`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`SHARECAPITAL` (
+  `ORG_ID` VARCHAR(36) NOT NULL ,
+  `SHARECAPITAL_ID` VARCHAR(36) NOT NULL ,
+  `SHARECAPITAL_STATUS` VARCHAR(45) NOT NULL COMMENT 'AUTHORISED' ,
+  `SHARECLASS` CHAR(1) NULL DEFAULT NULL ,
+  `SHARECAPITAL_TYPE` VARCHAR(10) NOT NULL COMMENT 'PREFERENCE' ,
+  `NOMINAL_VALUE` INT(11) NOT NULL ,
+  `NO_OF_SHARES` INT(11) NOT NULL ,
+  `CONVERSION_DATE`  DATE NULL DEFAULT NULL ,
+  `REDEMPTION_DATE`  DATE NULL DEFAULT NULL ,
+  PRIMARY KEY (`SHARECAPITAL_ID`) ,
+  INDEX `SHARECAPITAL_ORG_FK_idx` (`ORG_ID` ASC) ,
+  CONSTRAINT `SHARECAPITAL_ORG_FK`
+    FOREIGN KEY (`ORG_ID` )
+    REFERENCES `Lexstart`.`ORGANIZATION` (`ORG_ID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`SHAREHOLDERS`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`SHAREHOLDERS` (
+  `ORG_ID` VARCHAR(36) NOT NULL ,
+  `SHAREHOLDER_NAME` VARCHAR(45) NULL DEFAULT NULL ,
+  `SHARECAPITAL_ID` VARCHAR(45) NULL DEFAULT NULL ,
+  `SHARECAPITAL_AMOUNT` VARCHAR(45) NULL DEFAULT NULL ,
+  `PERCENTAGE_STAKE` VARCHAR(45) NULL DEFAULT NULL ,
+  `SPECIAL_RIGHTS` BLOB NULL DEFAULT NULL ,
+  PRIMARY KEY (`ORG_ID`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `Lexstart`.`STATES`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `Lexstart`.`STATES` (
+  `STATE_CODE` CHAR(2) NOT NULL ,
+  `STATE_NAME` VARCHAR(45) NOT NULL ,
+  PRIMARY KEY (`STATE_CODE`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- procedure MCAEFORMS
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `Lexstart`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `MCAEFORMS`()
+BEGIN
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"DIR-12",
+"eform",
+"Appointment of Director"
+);
+
+
+INSERT INTO MCA_EFORMS_CLASS
+(
+MCA_EFORM_CLASS_ID,
+MCA_EFORM_NAME,
+MCA_EFORM_URL,
+MCA_EFORM_HELP_URL,
+MCA_EFORM_PURPOSE,
+MCA_EFORM_VERSION_DATE,
+EFORM_DOC_CLASS_ID,
+COMPANIES_ACT_YEAR
+)
+values
+(
+UUID(),
+"DIR-12",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_DIR-12.zip",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_DIR-12_help.zip",
+"Appointment of Director",
+'2014-07-05',
+(SELECT DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="DIR-12" AND DOC_TYPE ="eform" AND PURPOSE="Appointment of Director"),
+2013
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"Resolution for Appointment of Director",
+"Resolution",
+"Appointment of Director"
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"DIR-11",
+"Eform",
+"Resignation of Director"
+);
+
+INSERT INTO MCA_EFORMS_CLASS
+(
+MCA_EFORM_CLASS_ID,
+MCA_EFORM_NAME,
+MCA_EFORM_URL,
+MCA_EFORM_HELP_URL,
+MCA_EFORM_PURPOSE,
+MCA_EFORM_VERSION_DATE,
+EFORM_DOC_CLASS_ID,
+COMPANIES_ACT_YEAR
+)
+values
+(
+UUID(),
+"DIR-11",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_DIR-11.zip",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_DIR-11_help.zip",
+"Resignation of Director",
+'2014-07-05',
+(SELECT DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="DIR-11" AND DOC_TYPE ="eform" AND PURPOSE="Resignation of Director"),
+2013
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"Resolution for Resignation of Director",
+"Resolution",
+"Resignation of Director"
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"MGT-14",
+"Eform",
+"Change of Object"
+);
+
+INSERT INTO MCA_EFORMS_CLASS
+(
+MCA_EFORM_CLASS_ID,
+MCA_EFORM_NAME,
+MCA_EFORM_URL,
+MCA_EFORM_HELP_URL,
+MCA_EFORM_PURPOSE,
+MCA_EFORM_VERSION_DATE,
+EFORM_DOC_CLASS_ID,
+COMPANIES_ACT_YEAR
+)
+values
+(
+UUID(),
+"MGT-14",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_MGT-14.zip",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_MGT-14_help.zip",
+"Change of Object",
+'2014-06-25',
+(SELECT DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="MGT-14" AND DOC_TYPE ="eform" AND PURPOSE="Change of Object"),
+2013
+);
+
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"Resolution for Change of Object",
+"Resolution",
+"Change of Object"
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"MOA",
+"Charter",
+"Change of Object"
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"MGT-14",
+"Eform",
+"Ammendment to AOA"
+);
+
+INSERT INTO MCA_EFORMS_CLASS
+(
+MCA_EFORM_CLASS_ID,
+MCA_EFORM_NAME,
+MCA_EFORM_URL,
+MCA_EFORM_HELP_URL,
+MCA_EFORM_PURPOSE,
+MCA_EFORM_VERSION_DATE,
+EFORM_DOC_CLASS_ID,
+COMPANIES_ACT_YEAR
+)
+values
+(
+UUID(),
+"MGT-14",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_MGT-14.zip",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_MGT-14_help.zip",
+"Ammendment to AOA",
+'2014-06-25',
+(SELECT DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="MGT-14" AND DOC_TYPE ="eform" AND PURPOSE="Ammendment to AOA"),
+2013
+);
+
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"Resolution for Ammendment to AOA",
+"Resolution",
+"Ammendment to AOA"
+);
+
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"AOA",
+"Charter",
+"Ammendment to AOA"
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"SH-7",
+"Eform",
+"Change in Share Capital"
+);
+
+INSERT INTO MCA_EFORMS_CLASS
+(
+MCA_EFORM_CLASS_ID,
+MCA_EFORM_NAME,
+MCA_EFORM_URL,
+MCA_EFORM_HELP_URL,
+MCA_EFORM_PURPOSE,
+MCA_EFORM_VERSION_DATE,
+EFORM_DOC_CLASS_ID,
+COMPANIES_ACT_YEAR
+)
+values
+(
+UUID(),
+"SH-7",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_SH-7.zip",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_SH-7_help.zip",
+"Change in Share Capital",
+'2014-06-25',
+(SELECT DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="SH-7" AND DOC_TYPE ="eform" AND PURPOSE="Change in Share Capital"),
+2013
+);
+
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"MGT-14",
+"Eform",
+"Change in Share Capital"
+);
+
+
+INSERT INTO MCA_EFORMS_CLASS
+(
+MCA_EFORM_CLASS_ID,
+MCA_EFORM_NAME,
+MCA_EFORM_URL,
+MCA_EFORM_HELP_URL,
+MCA_EFORM_PURPOSE,
+MCA_EFORM_VERSION_DATE,
+EFORM_DOC_CLASS_ID,
+COMPANIES_ACT_YEAR
+)
+values
+(
+UUID(),
+"MGT-14",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_MGT-14.zip",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_MGT-14_help.zip",
+"Change in Share Capital",
+'2014-06-25',
+(SELECT DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="MGT-14" AND DOC_TYPE ="eform" AND PURPOSE="Change in Share Capital"),
+2013
+);
+
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"Resolution for Change in Share Capital",
+"Resolution",
+"Change in Share Capital"
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"MOA",
+"Charter",
+"Change in Share Capital"
+);
+
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"PAS-4",
+"Eform",
+"Change in Shareholding/Allotment of shares"
+);
+
+INSERT INTO MCA_EFORMS_CLASS
+(
+MCA_EFORM_CLASS_ID,
+MCA_EFORM_NAME,
+MCA_EFORM_URL,
+MCA_EFORM_HELP_URL,
+MCA_EFORM_PURPOSE,
+MCA_EFORM_VERSION_DATE,
+EFORM_DOC_CLASS_ID,
+COMPANIES_ACT_YEAR
+)
+values
+(
+UUID(),
+"PAS-4",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_PAS-4.zip",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_PAS-4_help.zip",
+"Change in Shareholding/Allotment of shares",
+'2014-06-25',
+(SELECT DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="PAS-4" AND DOC_TYPE ="eform" AND PURPOSE="Change in Shareholding/Allotment of shares"),
+2013
+);
+
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"PAS-5",
+"Eform",
+"Change in Shareholding/Allotment of shares"
+);
+
+INSERT INTO MCA_EFORMS_CLASS
+(
+MCA_EFORM_CLASS_ID,
+MCA_EFORM_NAME,
+MCA_EFORM_URL,
+MCA_EFORM_HELP_URL,
+MCA_EFORM_PURPOSE,
+MCA_EFORM_VERSION_DATE,
+EFORM_DOC_CLASS_ID,
+COMPANIES_ACT_YEAR
+)
+values
+(
+UUID(),
+"PAS-5",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_PAS-5.zip",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_PAS-5_help.zip",
+"Change in Shareholding/Allotment of shares",
+'2014-06-25',
+(SELECT DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="PAS-5" AND DOC_TYPE ="eform" AND PURPOSE="Change in Shareholding/Allotment of shares"),
+2013
+);
+
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"MGT-14",
+"Eform",
+"Change in Shareholding/Allotment of shares"
+);
+
+INSERT INTO MCA_EFORMS_CLASS
+(
+MCA_EFORM_CLASS_ID,
+MCA_EFORM_NAME,
+MCA_EFORM_URL,
+MCA_EFORM_HELP_URL,
+MCA_EFORM_PURPOSE,
+MCA_EFORM_VERSION_DATE,
+EFORM_DOC_CLASS_ID,
+COMPANIES_ACT_YEAR
+)
+values
+(
+UUID(),
+"MGT-14",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_MGT-14.zip",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_MGT-14_help.zip",
+"Change in Shareholding/Allotment of shares",
+'2014-06-25',
+(SELECT DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="MGT-14" AND DOC_TYPE ="eform" AND PURPOSE="Change in Shareholding/Allotment of shares"),
+2013
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"PAS-3",
+"Eform",
+"Change in Shareholding/Allotment of shares"
+);
+
+INSERT INTO MCA_EFORMS_CLASS
+(
+MCA_EFORM_CLASS_ID,
+MCA_EFORM_NAME,
+MCA_EFORM_URL,
+MCA_EFORM_HELP_URL,
+MCA_EFORM_PURPOSE,
+MCA_EFORM_VERSION_DATE,
+EFORM_DOC_CLASS_ID,
+COMPANIES_ACT_YEAR
+)
+values
+(
+UUID(),
+"PAS-3",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_PAS-3.zip",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_PAS-3_help.zip",
+"Change in Shareholding/Allotment of shares",
+'2014-06-25',
+(SELECT DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="PAS-3" AND DOC_TYPE ="eform" AND PURPOSE="Change in Shareholding/Allotment of shares"),
+2013
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"VALUATION CERTIFICATE",
+"Charter",
+"Change in Shareholding/Allotment of shares"
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"SHARE CERTIFICATE",
+"Charter",
+"Change in Shareholding/Allotment of shares"
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"35 A",
+"Eform",
+"Change in Shareholding/Transfer of shares"
+);
+
+INSERT INTO MCA_EFORMS_CLASS
+(
+MCA_EFORM_CLASS_ID,
+MCA_EFORM_NAME,
+MCA_EFORM_URL,
+MCA_EFORM_HELP_URL,
+MCA_EFORM_PURPOSE,
+MCA_EFORM_VERSION_DATE,
+EFORM_DOC_CLASS_ID,
+COMPANIES_ACT_YEAR
+)
+values
+(
+UUID(),
+"35 A",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/1018-Form35A.zip",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/1018-Form35A_help.zip",
+"Change in Shareholding/Transfer of shares",
+'2014-06-25',
+(SELECT DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="35 A" AND DOC_TYPE ="eform" AND PURPOSE="Change in Shareholding/Transfer of shares"),
+2013
+);
+
+INSERT INTO DOC_CLASS
+(
+DOC_CLASS_ID,
+DOC_NAME,
+DOC_TYPE,
+PURPOSE
+)
+values
+(
+UUID(),
+"Resolution for Change in Shareholding/Transfer of shares",
+"Resolution",
+"Change in Shareholding/Transfer of shares"
+);
+
+
+END
+$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure tags
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `Lexstart`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `tags`()
+BEGIN
+
+INSERT INTO ATTRIBUTE
+(
+ATTRIBUTE_ID,
+ATTRIBUTE_NAME,
+TABLE_NAME,
+COL_NAME
+)
+values
+(
+UUID(),
+"Auditor Type",
+"AUDITOR",
+"AD_TYPE"
+);
+
+
+INSERT INTO ATTRIBUTE
+(
+ATTRIBUTE_ID,
+ATTRIBUTE_NAME,
+TABLE_NAME,
+COL_NAME
+)
+values
+(
+UUID(),
+"Auditor Name",
+"AUDITOR",
+"NAME"
+);
+
+INSERT INTO ATTRIBUTE
+(
+ATTRIBUTE_ID,
+ATTRIBUTE_NAME,
+TABLE_NAME,
+COL_NAME
+)
+values
+(
+UUID(),
+"Auditor PAN",
+"AUDITOR",
+"PAN"
+);
+
+
+INSERT INTO ATTRIBUTE
+(
+ATTRIBUTE_ID,
+ATTRIBUTE_NAME,
+TABLE_NAME,
+COL_NAME
+)
+values
+(
+UUID(),
+"Auditor membership no.",
+"AUDITOR",
+"MEMBERSHIP_NO"
+);
+
+INSERT INTO ATTRIBUTE
+(
+ATTRIBUTE_ID,
+ATTRIBUTE_NAME,
+TABLE_NAME,
+COL_NAME
+)
+values
+(
+UUID(),
+"Audit Firm Reg. No.",
+"AUDITOR",
+"FIRM_REG_NO"
+);
+
+INSERT INTO ATTRIBUTE
+(
+ATTRIBUTE_ID,
+ATTRIBUTE_NAME,
+TABLE_NAME,
+COL_NAME
+)
+values
+(
+UUID(),
+"Auditor Appointment Date",
+"AUDITOR",
+"APPT_DATE"
+);
+
+INSERT INTO ATTRIBUTE
+(
+ATTRIBUTE_ID,
+ATTRIBUTE_NAME,
+TABLE_NAME,
+COL_NAME
+)
+values
+(
+UUID(),
+"Appointment Duration",
+"AUDITOR",
+"APPT_DURATION"
+);
+
+
+INSERT INTO ATTRIBUTE
+(
+ATTRIBUTE_ID,
+ATTRIBUTE_NAME,
+TABLE_NAME,
+COL_NAME
+)
+values
+(
+UUID(),
+"Auditor Resignation Date",
+"AUDITOR",
+"RESGN_DATE"
+);
+
+INSERT INTO ATTRIBUTE
+(
+ATTRIBUTE_ID,
+ATTRIBUTE_NAME,
+TABLE_NAME,
+COL_NAME
+)
+values
+(
+UUID(),
+"Auditor Resignation Type",
+"AUDITOR",
+"RESGN_TYPE"
+);
+
+INSERT INTO DOC_CLASS_TAGS
+(
+DOC_CLASS_ID,
+ATTRIBUTE_ID,
+REFERENCE_TYPE
+) 
+values
+(
+(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME = "FORM NO. ADT-1"),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="NAME"),
+"P"
+);
+
+INSERT INTO DOC_CLASS_TAGS
+(
+DOC_CLASS_ID,
+ATTRIBUTE_ID,
+REFERENCE_TYPE
+) 
+values
+(
+(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME = "FORM NO. ADT-1"),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="PAN"),
+"P"
+);
+
+INSERT INTO DOC_CLASS_TAGS
+(
+DOC_CLASS_ID,
+ATTRIBUTE_ID,
+REFERENCE_TYPE
+) 
+values
+(
+(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME = "FORM NO. ADT-1"),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="MEMBERSHIP_NO"),
+"P"
+);
+
+INSERT INTO DOC_CLASS_TAGS
+(
+DOC_CLASS_ID,
+ATTRIBUTE_ID,
+REFERENCE_TYPE
+) 
+values
+(
+(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME = "FORM NO. ADT-1"),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="APPT_DATE"),
+"P"
+);
+
+
+INSERT INTO DOC_CLASS_TAGS
+(
+DOC_CLASS_ID,
+ATTRIBUTE_ID,
+REFERENCE_TYPE
+) 
+values
+(
+(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME = "FORM NO. ADT-1"),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="FIRM_REG_NO"),
+"P"
+);
+
+INSERT INTO DOC_CLASS_TAGS
+(
+DOC_CLASS_ID,
+ATTRIBUTE_ID,
+REFERENCE_TYPE
+) 
+values
+(
+(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME = "FORM NO. ADT-1"),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="APPT_DURATION"),
+"P"
+);
+
+INSERT INTO DOC_CLASS_TAGS
+(
+DOC_CLASS_ID,
+ATTRIBUTE_ID,
+REFERENCE_TYPE
+) 
+values
+(
+(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME = "FORM NO. ADT-1"),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="AD_TYPE"),
+"P"
+);
+
+INSERT INTO DOC_CLASS_TAGS
+(
+DOC_CLASS_ID,
+ATTRIBUTE_ID,
+REFERENCE_TYPE
+) 
+values
+(
+(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME = "FORM NO. ADT-1"),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="RESGN_DATE"),
+"P"
+);
+
+
+
+INSERT INTO DOC_CLASS_TAGS
+(
+DOC_CLASS_ID,
+ATTRIBUTE_ID,
+REFERENCE_TYPE
+) 
+values
+(
+(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME = "FORM NO. ADT-1"),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="RESGN_TYPE"),
+"P"
+);
+INSERT INTO DOC_TAGS
+(
+DOC_ID,
+ATTRIBUTE_ID,
+VALUE
+)
+values
+(
+(SELECT DOC_ID FROM DOCUMENTS where DOC_CLASS_ID =(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME="FORM NO. ADT-1")),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="NAME"),
+"Srivatsa C S & Co."
+);
+
+INSERT INTO DOC_TAGS
+(
+DOC_ID,
+ATTRIBUTE_ID,
+VALUE
+)
+values
+(
+(SELECT DOC_ID FROM DOCUMENTS where DOC_CLASS_ID =(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME="FORM NO. ADT-1")),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="PAN"),
+"AUAPS9435K"
+);
+
+INSERT INTO DOC_TAGS
+(
+DOC_ID,
+ATTRIBUTE_ID,
+VALUE
+)
+values
+(
+(SELECT DOC_ID FROM DOCUMENTS where DOC_CLASS_ID =(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME="FORM NO. ADT-1")),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="MEMBERSHIP_NO"),
+"016501N"
+);
+
+INSERT INTO DOC_TAGS
+(
+DOC_ID,
+ATTRIBUTE_ID,
+VALUE
+)
+values
+(
+(SELECT DOC_ID FROM DOCUMENTS where DOC_CLASS_ID =(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME="FORM NO. ADT-1")),
+(SELECT ATTRIBUTE_ID FROM ATTRIBUTE where TABLE_NAME ="AUDITOR" AND COL_NAME="AD_TYPE"),
+"FIRM"
+);
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure test
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `Lexstart`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `test`()
+BEGIN
+
+INSERT INTO `lexstart`.`organization` 
+(`ORG_ID`, `ORG_NAME`, `INC_DT`, 
+`PAN`, `TAN`, `CIN`, 
+`REG_NO`, `ACTIVITY_DSC`, `ORG_TYPE`, `ROC_CODE`, 
+`AUTH_CAP`, `PAID_UP_CAP`, `DATE_LAST_AGM`, 
+`DATE_LAST_BS`, `LAST_UPD_DT`) VALUES 
+('432143214321', 'SANGAM CAPITAL ADVISORS PRIVATE LIMITED', '2012-10-10', 
+'3242314', '12343214', '13243214', 
+1324321, 'VC', 'PVT LTD', 1, 
+10000, 10000, '2013-10-10', 
+'2011-10-10', '2014-01-01');
+
+
+INSERT INTO Lexstart.DOC_CLASS
+(
+`DOC_CLASS_ID`,
+`DOC_NAME`,
+`DOC_TYPE`,
+`PURPOSE`
+)
+values
+(
+UUID(),
+"FORM NO. ADT-1",
+"eform",
+"Notice of appointment of auditor by the company"
+);
+
+INSERT INTO Lexstart.DOC_CLASS
+(
+`DOC_CLASS_ID`,
+`DOC_NAME`,
+`DOC_TYPE`,
+`PURPOSE`
+)
+values
+(
+UUID(),
+"RESOLUTION FOR FORM NO. ADT-1",
+"eform",
+"Resolution for Appointment of auditor(s))"
+);
+
+INSERT INTO `Lexstart`.`MCA_EFORMS_CLASS`
+(`MCA_EFORM_CLASS_ID`,
+`MCA_EFORM_NAME`,
+`MCA_EFORM_URL`,
+`MCA_EFORM_HELP_URL`,
+`MCA_EFORM_PURPOSE`,
+`MCA_EFORM_VERSION_DATE`,
+`EFORM_DOC_CLASS_ID`)
+VALUES
+(UUID(),
+"FORM NO. ADT-1",
+"http://www.mca.gov.in/MCA21/dca/downloadeforms/eformTemplates/NCA/Form_ADT-1.pdf",
+"",
+"Appointment of Auditor",
+'2014-06-25',
+(SELECT DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME = 'FORM NO. ADT-1')
+);
+
+INSERT INTO Lexstart.LEGAL_EVENT_CLASS
+(
+LEGAL_EVENT_CLASS_ID,
+PURPOSE
+)
+values
+(
+UUID(),
+"APPOINTMENT OF AUDITOR"
+);
+
+INSERT INTO LEGAL_ACTION_TYPE
+(
+LEGAL_ACTION_TYPE_ID,
+DOC_CLASS_ID,
+LEGAL_ACTION
+)
+values
+(
+UUID(),
+(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME ="Resolution for FORM NO. ADT-1"),
+"Resolution for FORM NO. ADT-1"
+);
+
+
+
+INSERT INTO EVENT_ACTION_MAP
+(
+LEGAL_EVENT_CLASS_ID,
+LEGAL_ACTION_TYPE_ID,
+SEQ_NO
+)
+values
+(
+(SELECT LEGAL_EVENT_CLASS_ID FROM LEGAL_EVENT_CLASS where PURPOSE ="APPOINTMENT OF AUDITOR"),
+(SELECT LEGAL_ACTION_TYPE_ID FROM LEGAL_ACTION_TYPE where LEGAL_ACTION ="Resolution for FORM NO. ADT-1"),
+1
+);
+
+
+INSERT INTO LEGAL_ACTION_TYPE
+(
+LEGAL_ACTION_TYPE_ID,
+DOC_CLASS_ID,
+LEGAL_ACTION
+)
+values
+(
+UUID(),
+(SELECT DOC_CLASS_ID FROM DOC_CLASS where DOC_NAME ="FORM NO. ADT-1"),
+"FILL FORM NO. ADT-1"
+);
+
+
+
+INSERT INTO EVENT_ACTION_MAP
+(
+LEGAL_EVENT_CLASS_ID,
+LEGAL_ACTION_TYPE_ID,
+SEQ_NO
+)
+values
+(
+(SELECT LEGAL_EVENT_CLASS_ID FROM LEGAL_EVENT_CLASS where PURPOSE ="APPOINTMENT OF AUDITOR"),
+(SELECT LEGAL_ACTION_TYPE_ID FROM LEGAL_ACTION_TYPE where LEGAL_ACTION ="FILL FORM NO. ADT-1"),
+2
+);
+
+
+INSERT INTO LEGAL_EVENTS
+(
+LEGAL_EVENT_ID,
+ORG_ID,
+EVENT_DATE,
+LEGAL_EVENT_CLASS_ID
+)
+VALUES
+(
+UUID(),
+(SELECT ORG_ID FROM ORGANIZATION WHERE ORG_NAME ="SANGAM CAPITAL ADVISORS PRIVATE LIMITED"),
+curdate(),
+(SELECT LEGAL_EVENT_CLASS_ID FROM LEGAL_EVENT_CLASS WHERE PURPOSE="APPOINTMENT OF AUDITOR")
+);
+
+
+
+INSERT INTO LEGAL_ACTIONS
+(
+LEGAL_ACTION_ID,
+ACTION_DATE,
+ORG_ID,
+LEGAL_ACTION_TYPE_ID
+)
+values
+(
+UUID(),
+curdate(),
+(SELECT ORG_ID FROM ORGANIZATION WHERE ORG_NAME ="SANGAM CAPITAL ADVISORS PRIVATE LIMITED"),
+(SELECT LEGAL_ACTION_TYPE_ID FROM LEGAL_ACTION_TYPE WHERE LEGAL_ACTION ="Resolution for FORM NO. ADT-1")
+);
+
+
+INSERT INTO DOCUMENTS
+(
+DOC_ID,
+DOC_CLASS_ID,
+ORG_ID,
+DOC_DATE
+)
+values
+(
+UUID(),
+(select DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="Resolution for FORM NO. ADT-1"),
+(SELECT ORG_ID FROM ORGANIZATION WHERE ORG_NAME ="SANGAM CAPITAL ADVISORS PRIVATE LIMITED"),
+curdate()
+);
+
+INSERT INTO DOCUMENTS
+(
+DOC_ID,
+DOC_CLASS_ID,
+ORG_ID,
+DOC_DATE
+)
+values
+(
+UUID(),
+(select DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="FORM NO. ADT-1"),
+(SELECT ORG_ID FROM ORGANIZATION WHERE ORG_NAME ="SANGAM CAPITAL ADVISORS PRIVATE LIMITED"),
+curdate()
+);
+
+
+INSERT INTO LEGAL_ACTIONS
+(
+LEGAL_ACTION_ID,
+ACTION_DATE,
+ORG_ID,
+LEGAL_ACTION_TYPE_ID
+)
+values
+(
+UUID(),
+curdate(),
+(SELECT ORG_ID FROM ORGANIZATION WHERE ORG_NAME ="SANGAM CAPITAL ADVISORS PRIVATE LIMITED"),
+(SELECT LEGAL_ACTION_TYPE_ID FROM LEGAL_ACTION_TYPE WHERE LEGAL_ACTION ="FILL FORM NO. ADT-1")
+);
+
+INSERT INTO MCA_EFORM
+(
+DOC_ID,
+MCA_EFORM_CLASS_ID,
+ORG_ID
+)
+values
+(
+(SELECT DOC_ID FROM DOCUMENTS WHERE(DOC_CLASS_ID=(select DOC_CLASS_ID FROM DOC_CLASS WHERE DOC_NAME="FORM NO. ADT-1")AND ORG_ID=(SELECT ORG_ID FROM ORGANIZATION WHERE ORG_NAME ="SANGAM CAPITAL ADVISORS PRIVATE LIMITED") AND DOC_DATE= CURDATE())),
+(SELECT MCA_EFORM_CLASS_ID FROM MCA_EFORMS_CLASS WHERE MCA_EFORM_NAME ="FORM NO. ADT-1"),
+(SELECT ORG_ID FROM ORGANIZATION WHERE ORG_NAME ="SANGAM CAPITAL ADVISORS PRIVATE LIMITED")
+);
+
+
+END$$
+
+DELIMITER ;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

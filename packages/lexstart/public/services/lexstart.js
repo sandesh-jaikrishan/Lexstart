@@ -9,13 +9,5 @@ angular
 	   		 		}
 				 ]);
 
-angular
-	.module('mean.lexstart')
-		.factory('LexOrgUsrSvc', [ '$resource',
-				  function($resource) 
-				 	{
-						return $resource('/userorg/:orgUsrId',{orgUsrId: '@id'});
-	   		 		}
-				 ]);	
 
 					 	

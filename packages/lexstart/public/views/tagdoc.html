@@ -9,12 +9,12 @@
 			        			Tag Document Attributes 
 			        		</accordion-heading>			        		
 				      <!--Body content-->
-					      	  <div class="row form-group" ng-repeat="tag in selectedDocClass.tags">
+					      	  <div class="row form-group" ng-repeat="tag in selectedDocClassInst.tags">
 					      	  	<div class="col-md-3" >
-						      	  	<label class="control-label">{{tag.attribute_id.table_name}}.{{tag.attribute_id.attribute_name}}</label>	
+						      	  	<label class="control-label">{{tag.table_name}}.{{tag.attribute_name}}</label>	
 							    </div>	      
 							    <div class="col-md-5" >
-							    	<input type="text" class="form-control" ng-model="tag.attribute_id.value" ng-required="true"/>
+							    	<input type="text" class="form-control" ng-model="tag.value" ng-required="true"/>
 
 								    <!-- <input ng-if="field.type === 'text'" type="text" class="form-control" ng-model="field.value" placeholder="Enter {{field.label}}" data-toggle="tooltip" tooltip-placement="right" tooltip="{{field.htxt}}" ng-required="true"/> -->
 
@@ -35,12 +35,12 @@
 					<div class="row">
 					     <div class="col-md-3" >
 					     	<button type="button" class="btn btn-primary">
-		  						<a style="color:#fff" href="/#!/lexstart/uploaddocs">
+		  						<a style="color:#fff" href="/#!/lexstart/uploadDocs">
 	                        		<i class="glyphicon glyphicon-arrow-up"></i>Ok
 	                    		</a>
                     		</button>
                     		<button type="button" class="btn btn-primary">
-		  						<a style="color:#fff" href="/#!/lexstart/uploaddocs">
+		  						<a style="color:#fff" href="/#!/lexstart/uploadDocs">
 	                        		<i class="glyphicon glyphicon-arrow-down"></i>Cancel
 	                    		</a>
                     		</button>

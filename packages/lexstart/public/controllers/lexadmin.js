@@ -4,7 +4,7 @@ var app = angular.module('mean.lexstart');
 
 
 app.controller('LexConfigAdminController',
-function($scope,$location,$http, $timeout, $filter, Global,$log, $fileUploader, ngTableParams)
+function($scope,$rootScope, $location,$http, $timeout, $filter, Global,$log, $fileUploader, ngTableParams)
 {
 	$scope.doc_type_list =  [{name :'eform' , value : '1' },
         					 {name :'Resolution' , value : '2' },
@@ -14,7 +14,7 @@ function($scope,$location,$http, $timeout, $filter, Global,$log, $fileUploader, 
     $scope.attr_ref_type_list = [{name :'Primary' , value : '1' },
         					 	 {name :'Secondary' , value : '2' }
         						];		
-    $scope.editId = 0;    
+    $scope.editId = 0;   
 
     
     $scope.selectedAttrList = [];
@@ -240,58 +240,94 @@ function($scope,$location,$http, $timeout, $filter, Global,$log, $fileUploader, 
     };
 });
 
+
 app.controller('LexFileUploadController',
-function($scope,$location,$http, Global,$log, $fileUploader, ngTableParams)
+function($scope,$rootScope, $location,$http, Global,$log, $fileUploader, ngTableParams)
 {
 	 
-	 $scope.tagDoc = function(item) {
-	 	 if (item.selectedDocClass)
+	 $scope.tagDoc = function(tagDocItem) {
+	 	 if (tagDocItem.selectedDocClass)
 	 	 {
-	 	 	Global.selectedDocClass = item.selectedDocClass;
+	 	 	if (!tagDocItem.selectedDocClassInst || tagDocItem.selectedDocClassInst.doc_class_id !== tagDocItem.selectedDocClass._id)
+	 	 	{
+	 	 		tagDocItem.selectedDocClassInst = {doc_class_id : tagDocItem.selectedDocClass._id,
+											 org_id : $rootScope.org._id, 
+											 doc_date : new Date(),
+											 tags : []};
+				tagDocItem.selectedDocClass.tags.forEach(function(item){
+					tagDocItem.selectedDocClassInst.tags.push({
+						attribute_id : item.attribute_id._id,
+						verified : false,
+						value : '',
+						table_name : item.attribute_id.table_name,
+						attribute_name : item.attribute_id.attribute_name
+					});
+				});		
+	 	 	}
+	 	 	Global.tagDocItem = tagDocItem;
+	 	 	Global.initUploadDocsForm.uploaderQueue = $scope.uploader.queue;	
 	 	 	$location.path('/lexstart/tagdoc');
 	 	 }
 	 };
 
 	 $scope.initTagDoc = function () {
-	 	$scope.selectedDocClass = Global.selectedDocClass; 	
-	 	
+	 	$scope.selectedDocClassInst = Global.tagDocItem.selectedDocClassInst; 	
+
+	 };
+	 $scope.upload = function (item) {
+	 	item.formData = [{key:'docTag',value:JSON.stringify(item.selectedDocClassInst)}];
+	 	item.upload();
+
+	 };
+	 $scope.uploadAll = function() {
+	 	$scope.uploader.uploadAll();
 	 };
 
 	 $scope.initUploadDocsForm = function() {
-        $http.get('/lexgetdocclasslist')
-		.success(function(data, status, headers, config) {
-			$scope.docClassList = data.docClassList;
-		}).error(function(data, status, headers, config) {
-			$scope.error = true;
-			$scope.errorList = ['Error fetching doc class list '+ data.error];        				
-		});				
 
-
-        $scope.uploader = $fileUploader.create({
-            scope: $scope,                          // to automatically update the html. Default: $rootScope
-            url: '/lexstart/file-upload',
-            formData: [
-                { key: 'value' }
-            ],
-            filters: [
-                function (item) {                    // first user filter
-                    console.info('filter1', item);
-                    return true;
-                }
-            ]
-	    });		
-    	
-    	$scope.uploader.bind('afteraddingfile', function (event, item) {
+	 	$scope.uploader = $fileUploader.create({
+            scope: $scope,                          
+            url: '/lexstart/file-upload'
+		});
+		$scope.uploader.bind('afteraddingfile', function (event, item) {
     		console.info('After adding a file::', event, event.currentScope , event.targetScope, item);
 		});
-        	
-        };
+
+	 	//if (!Global.initUploadDocsForm || Global.curr_org_id !== Global.initUploadDocsForm.org_id)
+	 	if (!Global.initUploadDocsForm || Global.initUploadDocsForm.org._id !== $rootScope.org._id)	
+	 	{
+	 		
+	 		Global.initUploadDocsForm = {org:$rootScope.org};
+
+	 		$scope.org_id = $rootScope.org._id;
+	 		$scope.org_name = $rootScope.org.org_name;	 		
+
+	        $http.get('/lexgetdocclasslist')
+			.success(function(data, status, headers, config) {
+				$scope.docClassList = data.docClassList;
+				Global.initUploadDocsForm.docClassList = $scope.docClassList;
+			}).error(function(data, status, headers, config) {
+				$scope.error = true;
+				$scope.errorList = ['Error fetching doc class list '+ data.error];        				
+			});	  
+    	}
+    	else
+    	{
+
+    		$scope.docClassList = Global.initUploadDocsForm.docClassList;
+    		Global.initUploadDocsForm.uploaderQueue.forEach(function(item){
+    			$scope.uploader.queue.push(item);
+    		});
+
+        }	
+    };
+    	
 });
 
 
 
 app.controller('LexAdminController', 
-	    function($scope, $filter, $location, $http, Global ,ngTableParams)
+	    function($scope, $rootScope, $filter, $location, $http, Global ,ngTableParams)
 	    {
 	        $scope.global = Global;        
 	        $scope.editId = -1;
@@ -340,28 +376,30 @@ app.controller('LexAdminController',
 	        	$scope.error = false;       	
 	        };							
 
-	        $scope.loadRegistrations = function() {
-	        	console.log('Inside loadRegistrations');
-
-	        	var registrations = [{name :  'Karthik Chandrsekar', email : 'karthik@gmail.com' , company : 'Sangam Pvt Ltd' , cin : 'E1341244143', email_valid_flag : 0, cin_valid_flag : 0, status : 1 , entry_date : new Date(2014,1,2,0,0,0,0)  },
-								 		 {name : 'Sandesh Jaikrishan', email : 'sandesh@gmail.com' , company : 'NCubeTech Pvt Ltd' , cin : '1EA41244143', email_valid_flag : 0, cin_valid_flag : 0, status : 1 , entry_date : new Date(2014,5,2,0,0,0,0)  },
-								 		 {name : 'Karthik Chandrsekar', email : 'karthik@gmail.com' , company : 'Sangam Pvt Ltd' , cin : 'E1341244143', email_valid_flag : 0, cin_valid_flag : 0, status : 1 , entry_date : new Date(2014,1,2,0,0,0,0)  },
-								 		 {name : 'Sandesh Jaikrishan', email : 'sandesh@gmail.com' , company : 'NCubeTech Pvt Ltd' , cin : '1EA41244143', email_valid_flag : 0, cin_valid_flag : 0, status : 1 , entry_date : new Date(2014,5,2,0,0,0,0)  },
-								 		 {name : 'Karthik Chandrsekar', email : 'karthik@gmail.com' , company : 'Sangam Pvt Ltd' , cin : 'E1341244143', email_valid_flag : 0, cin_valid_flag : 0, status : 1 , entry_date : new Date(2014,1,2,0,0,0,0)  },
-								 		 {name : 'Sandesh Jaikrishan', email : 'sandesh@gmail.com' , company : 'NCubeTech Pvt Ltd' , cin : '1EA41244143', email_valid_flag : 0, cin_valid_flag : 0, status : 1 , entry_date : new Date(2014,5,2,0,0,0,0)  }
-	        					 		]; 
+	        $scope.loadAllUserOrg = function() {
+	        	console.log('Inside loadAllUserOrg');
+	        	$scope.orgList = [];
+	        	$http.get('/loadAllUserOrg/'+$rootScope.user.username)
+				.success(function(data, status, headers, config) {
+					$scope.orgList = data.orgList;
+					console.log('Org List',$scope.orgList);
+				}).error(function(data, status, headers, config) {
+					$scope.error = true;
+					$scope.errorList = ['Error fetching doc class list '+ data.error];        				
+				});	
+	        	
 	        	
 	   			$scope.tableParams = new ngTableParams({
 			        page: 1,            // show first page
-			        count: 2 ,
-			        sorting: {name: 'asc'},
-			        filter: { name: 'S' }     
+			        count: 5 ,
+			        sorting: {org_name: 'asc'},
+			        filter:  {org_name: '' }     
 			    }, {
-			        total: registrations.length,
-			        counts :  [2,3,4],// length of data
+			        total: $scope.orgList.length,
+			        counts :  [],// length of data
 			        getData: function($defer, params) {
 			        	var orderedData = params.sorting() ? 
-			        					  $filter('orderBy')(registrations, params.orderBy()) : registrations;
+			        					  $filter('orderBy')($scope.orgList, params.orderBy()) : $scope.orgList;
 
 			        	orderedData = params.filter() ?
                    						 $filter('filter')(orderedData, params.filter()) : orderedData;	
@@ -374,7 +412,9 @@ app.controller('LexAdminController',
 
 			};
 
-	        	
+			$scope.setOrgForSession = function(_org) {
+				$rootScope.org = _org;						
+			};
 
 	        $scope.getProspectTypeName = function(val) {
 	        	var ptype = $scope.prospect_type_list.filter( function(item){return (item.value===val);} );
@@ -458,6 +498,29 @@ app.controller('LexAdminController',
 	        			$scope.errorList = ['Error creating acount for '+prospect.name+ '\n'+ data.errors]; 
 				});
             };
+
+            $scope.initVerifyDocs = function() {
+	        	console.log('Inside loadDocsForTagging');
+
+	        	$http.get('/lexgetorgdoclist/' + $rootScope.org._id
+				).success(function(data, status, headers, config) {
+						console.log('success response');
+						$scope.docs = data.orgDocs;		    			
+				}).error(function(data, status, headers, config) {
+						$scope.error = true;
+						$scope.errorList = ['Error loading docss '+$scope.docClass.doc_mnemonic+ '\n'+ data.errors]; 
+				});
+
+	        	 
+	        	$scope.actions = [{name : 'Change Company Name', value : 1001},
+	        					  {name : 'Change Director Name', value : 1002},
+	        					  {name : 'Change Company Address', value : 1003}
+	        					];
+
+
+
+	        };
+
 		}	
 
 

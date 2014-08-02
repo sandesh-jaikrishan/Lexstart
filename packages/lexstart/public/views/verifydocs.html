@@ -1,8 +1,8 @@
-<div data-ng-controller="LexstartController" data-ng-init="loadDocsForTagging()">
+<div data-ng-controller="LexAdminController" data-ng-init="initVerifyDocs()">
 	<div class="container">
 		<div class="col-md-10 col-md-offset-1">  
 				<div class="page-header">
-					<h1><span class="glyphicon glyphicon-user"></span> Tag Documents & Initiate Action</h1>
+					<h1><span class="glyphicon glyphicon-user"></span>Verify Docs</h1>
 				</div>
 				<table class="table table-striped">
   					<thead>
@@ -18,9 +18,9 @@
   					</thead>
   					<tbody>
   					<tr data-ng-repeat="doc in docs">
-	  					<td> {{doc.name}} </td>
-	  					<td> {{doc.class}} </td>
-	  					<td> {{doc.date}} </td>
+	  					<td> {{doc.orig_file_name}} </td>
+	  					<td> {{doc.doc_class_id.doc_name}} </td>
+	  					<td> {{doc.doc_date}} </td>
 	  					<td> 
                         	<!--ng-model="{{fileList[item.file.name].tagVal}}"-->
                         	<select class="form-control" ng-model="doc.action">

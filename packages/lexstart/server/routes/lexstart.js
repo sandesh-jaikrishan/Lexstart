@@ -3,39 +3,28 @@
 var lexctrl = require('../controllers/lexstart');
 var lexregctrl = require('../controllers/lexregistration');
 var lexadminctrl = require('../controllers/lexadminctrl');
-var multiparty = require('multiparty');
-var util = require('util');
 
 
 // The Package is past automatically as first parameter
 module.exports = function(Lexstart, app, auth, database) {
 
-    
+    app.route('/lexstart/file-upload')
+       .post(lexadminctrl.uploadDocs);
 
-    app.post('/lexstart/file-upload', function(req, res, next) {
-        console.log('data posted via upload form');
-        //console.log(req);
-        var _uploadDir = 'C:\\temp\\lexstart';
-        var form = new multiparty.Form({uploadDir : _uploadDir});
-
-        form.parse(req, function(err, fields, files) {
-            console.log('files uploaded');
-            console.log('Files =>',files);
-            console.log('Fields => ',fields);
-
-            res.writeHead(200, {'content-type': 'text/plain'});
-            res.write('received upload:\n\n');
-            res.end(util.inspect({fields: fields, files: files}));
-        });
-        //console.log(req.files);
-        //res.status(200).send('File received on server');
-    });
+    app.route('/lexstart/download/:file_name')
+       .get(lexadminctrl.downloadDocs);   
 
     app.route('/lexreginterest')
         .post(lexregctrl.registerInterest);
 
+    app.route('/loadAllUserOrg/:username')
+        .get(lexadminctrl.loadAllUserOrg);  
+
     app.route('/lexgetdocclasslist')
-        .get(lexadminctrl.getDocClassList);    
+        .get(lexadminctrl.getDocClassList);   
+
+    app.route('/lexgetorgdoclist/:orgId')
+        .get(lexadminctrl.getOrgDocList);     
 
     app.route('/updateInsertDocClass')
         .post(lexadminctrl.updateInsertDocClass);   
@@ -44,8 +33,8 @@ module.exports = function(Lexstart, app, auth, database) {
         .get(lexadminctrl.getAttributeList);                
         
 
-    app.route('/org')
-        .get(lexctrl.getAllOrg);
+    // app.route('/org')
+    //     .get(lexctrl.getAllOrg);
 
     app.route('/lexgetprospects')
         .get(lexadminctrl.getAllProspects);
@@ -63,11 +52,11 @@ module.exports = function(Lexstart, app, auth, database) {
         .get(lexctrl.getOrg);
     //    .put(auth.requiresLogin, hasAuthorization, lexctrl.updateOrg);
 
-    app.route('/userorg/:orgUsrId')
-        .get(lexctrl.getOrg);
+    // app.route('/userorg/:orgUsrId')
+    //     .get(lexctrl.getOrg);
 
-    app.param('orgId', lexctrl.setOrg);
+    // app.param('orgId', lexctrl.setOrg);
 
-    app.param('orgUsrId', lexctrl.setUserOrg);
+    // app.param('orgUsrId', lexctrl.setUserOrg);
 
 };

@@ -16,10 +16,12 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, items) {
   };
 };
 
+
+
 angular
 .module('mean.lexstart')
-	.controller('LexstartController', ['$scope', '$http', '$location', '$modal', '$log','$fileUploader','Global','LexOrgSvc','LexOrgUsrSvc',
-	    function($scope,  $http, $location, $modal, $log, $fileUploader, Global, LexOrgSvc, LexOrgUsrSvc)
+	.controller('LexstartController', ['$scope', '$rootScope', '$http', '$location', '$modal', '$log','$fileUploader','Global','LexOrgSvc',
+	    function($scope,  $rootScope, $http, $location, $modal, $log, $fileUploader, Global, LexOrgSvc)
 		{
 	        $scope.global = Global;
 	        $scope.package = {
@@ -32,22 +34,7 @@ angular
 
 	        };
 
-	        $scope.loadDocsForTagging = function() {
-	        	console.log('Inside loadDocsForTagging');
-	        	$scope.docs = [{name : 'INCP_2102131.pdf', class :'INC_DOC', tags :'name:Sangam\ndate:12Jan2014\nCIN:A123213' , date : '12-Jan-2011', action :''},      		
-	        				   {name : 'Board_Mtg_2131.pdf', class :'BMR_DOC', tags :'date:12Jan2014\nName Resolution' , date : '12-Jan-2014', action :''},  
-	        				   {name : 'Board_Mtg_245.pdf', class :'BMR_DOC', tags :'date:12Jan2014\nDirector Change' , date : '12-Feb-2014', action :''},  
-							   {name : 'INCP_2102131.pdf', class :'INC_DOC', tags :'name:Sangam\ndate:12Jan2014\nCIN:A123213' , date : '12-Jan-2011', action :''},      		
-	        				   {name : 'Board_Mtg_2131.pdf', class :'BMR_DOC', tags :'date:12Jan2014\nName Resolution' , date : '12-Jan-2014', action :''},  
-	        				   {name : 'Board_Mtg_245.pdf', class :'BMR_DOC', tags :'date:12Jan2014\nDirector Change' , date : '12-Feb-2014', action :''}
-	        				 ];
-	        	$scope.actions = [{name : 'Change Company Name', value : 1001},
-	        					  {name : 'Change Director Name', value : 1002},
-	        					  {name : 'Change Company Address', value : 1003}
-	        					];
-
-	        };
-
+	        
 	        $scope.loadDocTaggingAttributes = function() {
 	        	console.log('Inside loadDocTaggingAttributes');
 
@@ -55,7 +42,7 @@ angular
 									{label:'Name', type :'text',findex:'org_name',supportDocs:'Y',groupId :1, value :''},
 									{label:'CIN', type :'text',findex:'cin',supportDocs:'Y',groupId :1, value :''},
 									{label:'ROC Code', type :'select',findex:'roc_code',supportDocs:'Y',groupId :1, value :''},
-									{label:'PIN', type :'text',findex:'pin_code',supportDocs:'Y',groupId :2, value :''}
+									{label:'PIN', type :'text',findex:'pin_code', value :''}
 									]; 
 	        	$scope.options = [{name : 'ROC_Delhi', value : 1001},
 	        					  {name : 'ROC_Mumbai', value : 1002},
@@ -113,60 +100,56 @@ angular
 	        $scope.loadProfile = function() {
 	        	$scope.comp = {};
 	        	$scope.status = {open : true};
+	        	$scope.org = {};
+	        					
+				$http.get('/org/'+$rootScope.org._id
+				).success(function(data, status, headers, config) {
+						console.log('success response');
+						$scope.org = data.org;		    			
+				}).error(function(data, status, headers, config) {
+						$scope.error = true;
+						$scope.errorList = ['Error loading Organization Details '+'\n'+ data.errors]; 
+				});
 
-	        	$scope.groups = [ {id : 1, name : 'Company - Basic Details'},
-	        					  {id : 2, name : 'Company - Address Details'},
-	        					  {id : 3, name : 'Company - Key Events & Capital Details'}
-	        					];
+				$http.get('/lexgetorgdoclist/' + $rootScope.org._id
+				).success(function(data, status, headers, config) {
+						console.log('success response');
+						$scope.org.docs = data.orgDocs;		    			
+				}).error(function(data, status, headers, config) {
+						$scope.error = true;
+						$scope.errorList = ['Error loading docss '+$scope.docClass.doc_mnemonic+ '\n'+ data.errors]; 
+				});
 
-	        	$scope.fields = [ 
-									{label:'Name', type :'text',findex:'org_name',supportDocs:'Y',groupId :1},
-									{label:'Organization Category', type :'text',findex:'org_cat',supportDocs:'Y',groupId :1},
-									{label:'Incorporation Date', type :'text',findex:'inc_dt',supportDocs:'Y',groupId :1},
-									{label:'Registration No', type :'text',findex:'reg_no',supportDocs:'Y',groupId :1},
-									{label:'Registered Office Address', type :'textarea',findex:'reg_off_add',supportDocs:'Y',groupId :2},
-									{label:'TAN', type :'text',findex:'tan',supportDocs:'Y',groupId :1},
-									{label:'PAN', type :'text',findex:'pan',supportDocs:'Y',groupId :1},
-									{label:'CIN', type :'text',findex:'cin',supportDocs:'Y',groupId :1},
-									{label:'ROC Code', type :'text',findex:'roc_code',supportDocs:'Y',groupId :1},
-									{label:'Auth Capital', type :'text',findex:'auth_cap',supportDocs:'Y',groupId :3},
-									{label:'Paid Up Capital', type :'text',findex:'paid_up_cap',supportDocs:'Y',groupId :3},
-									{label:'Activity Description', type :'text',findex:'activity_dsc',supportDocs:'Y',groupId :1},
-									{label:'Address Line1', type :'text',findex:'address_line_1',supportDocs:'Y',groupId :2},
-									{label:'Address Line2', type :'text',findex:'address_line_2',supportDocs:'Y',groupId :2},
-									{label:'City', type :'text',findex:'city',supportDocs:'Y',groupId :2},
-									{label:'State', type :'text',findex:'state_name',supportDocs:'Y',groupId :2},
-									{label:'Country', type :'text',findex:'country',supportDocs:'Y',groupId :2},
-									{label:'PIN', type :'text',findex:'pin_code',supportDocs:'Y',groupId :2},
-									{label:'Last AGM Date', type :'text',findex:'date_last_agm',supportDocs:'Y',groupId :3},
-									{label:'Last Balance Sheet Date', type :'text',findex:'date_last_bs',supportDocs:'Y',groupId :3}
+	        	
+	        	$scope.groups = [   { name : 'Company - Basic Details',
+									  fields : [{label:'Name', type :'text',entity_name : 'org',attribute_name:'org_name'},
+												{label:'Organization Category', type :'text',entity_name : 'org',attribute_name:'org_type'},
+												{label:'Incorporation Date', type :'text',entity_name : 'org',attribute_name:'inc_dt'},
+												{label:'Registration No', type :'text',entity_name : 'org',attribute_name:'reg_no'},
+												{label:'Registered Office Address', type :'textarea',entity_name : 'org',attribute_name:'reg_off_add'},
+												{label:'TAN', type :'text',entity_name : 'org',attribute_name:'tan'},
+												{label:'PAN', type :'text',entity_name : 'org',attribute_name:'pan'},
+												{label:'CIN', type :'text',entity_name : 'org',attribute_name:'cin'},
+												{label:'ROC Code', type :'text',entity_name : 'org',attribute_name:'roc_code'}												
+											   ]},
+									 {name : 'Company - Address Details',		   
+									  fields : [{label:'Activity Description', type :'text',entity_name : 'org',attribute_name:'activity_dsc'},
+												{label:'Address Line1', type :'text',entity_name : 'org',attribute_name:'address_line_1'},
+												{label:'Address Line2', type :'text',entity_name : 'org',attribute_name:'address_line_2'},
+												{label:'City', type :'text',entity_name : 'org',attribute_name:'city'},
+												{label:'State', type :'text',entity_name : 'org',attribute_name:'state_name'},
+												{label:'Country', type :'text',entity_name : 'org',attribute_name:'country'},
+												{label:'PIN', type :'text',entity_name : 'org',attribute_name:'pin_code'}
+											   ]},
+									{name : 'Company - Key Events & Capital Details',		   
+									 fields : [{label:'Last AGM Date', type :'text',entity_name : 'org',attribute_name:'date_last_agm'},
+											   {label:'Last Balance Sheet Date', type :'text',entity_name : 'org',attribute_name:'date_last_bs'},
+											   {label:'Auth Capital', type :'text',entity_name : 'org',attribute_name:'auth_cap'},
+												{label:'Paid Up Capital', type :'text',entity_name : 'org',attribute_name:'paid_up_cap'}
+											  ]} 
 	        						]; 
 
-	        	$scope.profile = { 
-	        						org_name:{value:'Sangam Pvt Ltd',compliant : 'Y', isMCAInfo : 'Y'},
-									org_cat:{value:'Private Ltd',compliant : 'Y', isMCAInfo : 'Y'},
-									inc_dt:{value:'40310',compliant : 'N', isMCAInfo : 'Y'},
-									reg_no:{value:'12347132',compliant : 'Y', isMCAInfo : 'Y'},
-									reg_off_add:{value:'24 Hauz Khaz,\nNew Delhi',compliant : 'Y', isMCAInfo : 'Y'},
-									tan:{value:'TE79173039TY6',compliant : 'N', isMCAInfo : 'Y'},
-									pan:{value:'A1238083278FGD',compliant : 'Y', isMCAInfo : 'Y'},
-									cin:{value:'U74140DL2013PTC248145',compliant : 'Y', isMCAInfo : 'Y'},
-									roc_code:{value:'ROC_Delhi',compliant : 'N', isMCAInfo : 'Y'},
-									auth_cap:{value:'100000',compliant : 'Y', isMCAInfo : 'Y'},
-									paid_up_cap:{value:'100000',compliant : 'Y', isMCAInfo : 'Y'},
-									activity_dsc:{value:'Venture Capital',compliant : 'N', isMCAInfo : 'Y'},
-									address_line_1:{value:'24 B, XYZ Street,',compliant : 'Y', isMCAInfo : 'Y'},
-									address_line_2:{value:'Hauz Khaz',compliant : 'N', isMCAInfo : 'Y'},
-									city:{value:'New Delhi',compliant : 'Y', isMCAInfo : 'Y'},
-									state_name:{value:'Delhi',compliant : 'Y', isMCAInfo : 'Y'},
-									country:{value:'India',compliant : 'Y', isMCAInfo : 'Y'},
-									pin_code:{value:'119876',compliant : 'Y', isMCAInfo : 'Y'},
-									date_last_agm:{value:'4-Jan-2014',compliant : 'Y', isMCAInfo : 'Y'},
-									date_last_bs:{value:'11-Apr-2014',compliant : 'Y', isMCAInfo : 'Y'}
-
-	        					};	
-
-	        					
+	        		        					
 
 	        	$scope.directors = [{name : 'Karthik Chandrasekar', din : 'A1232132FG', appt_date :'10-Oct-2010', category :'Promoter' , type :'Chairman', designation :'Director'},      		
 	        					    {name : 'James Andreson', din : 'A1232132FG', appt_date :'15-Aug-2012', category :'Professional' , type :'Director', designation :'Addnl Director'},      		
@@ -197,18 +180,7 @@ angular
 								{type : 'INC_APP', purpose :'Company Incorporation', tags :'12-Apr-2011' , status : 'Complete', pend_at : ''}	      		
 	        				  ];
 
-	        	//LexstartSvc.query({orgId:'53b55201ad97a73085ea6283'}, function(org) {
-	        	//LexstartSvc.get({orgId:'53b56f69625bf2e3a8d30ac3'}, function(org) {	    
-	        	LexOrgUsrSvc.get({orgUsrId:'53ab20056570e18c2abd8328'}, function(org) {	
-	        		console.log('Fetched Org',org, org.name);
-                	$scope.org = org;
-                	$scope.profile.f_1.value = $scope.org.name;
-                	$scope.profile.f_2.value = $scope.org.inc_date;
-                	$scope.profile.f_4.value = $scope.org.tan;
-                	$scope.profile.f_5.value = $scope.org.pan;
-                	$scope.profile.f_6.value = $scope.org.cin;	
-            	});
-
+	        	
 	        };	        
 
 		 	

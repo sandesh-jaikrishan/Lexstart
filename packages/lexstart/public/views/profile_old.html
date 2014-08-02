@@ -8,35 +8,11 @@
 				      		<accordion-heading>
 			        			{{group.name}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
 			        		</accordion-heading>			        		
-				      <!--Body content-->
-					      	  <div class="row form-group" ng-repeat="field in group.fields">
+				          	  <div class="row form-group" ng-repeat="field in group.fields">
+					      	  	    <label class="control-label">Name</label>	
+							        <input type="text" class="form-control" ng-model="org.org_name" />								   
+								    <a class="btn" href="http://localhost:3000/lexstart/download/"><i class="glyphicon glyphicon-paperclip"></i></a>>
 
-					      	  	<div class="col-md-3" >
-						      	  	 <label for="{{field.label}}" class="control-label">{{field.label}}</label>	
-							    </div>	      
-							    
-							    <div class="col-md-5" >
-							    	<input ng-if="field.type === 'text'" type="text" class="form-control" ng-model="org[field.attribute_name]" placeholder="Awaiting Info Upload for {{field.label}}" data-toggle="tooltip" tooltip-placement="right" tooltip="{{field.htxt}}" disabled/>
-
-								    <textarea ng-if="field.type === 'textarea'" type="textarea" class="form-control" ng-model="profile[field.findex].value" tooltip="{{field.htxt}}"/>
-							    </div>
-							    <div class="col-md-2">
-					      	  	
-								    <a ng-if="field.supportDocs === 'Y'" class="btn" href="/#!" tooltip="Support Docs">
-						                <i class="glyphicon glyphicon-paperclip"></i>
-						            </a>
-
-						            <a ng-if="profile[field.findex].compliant === 'N'" class="btn"  tooltip="Non-Compliant Info">
-						                <i class="glyphicon glyphicon-thumbs-down"></i>
-						            </a>
-
-						            <a ng-if="profile[field.findex].compliant === 'Y'" class="btn"  tooltip="Compliant Info">
-						                <i class="glyphicon glyphicon-thumbs-up"></i>
-						            </a>
-
-						            <a ng-if="profile[field.findex].compliant === 'N'" class="btn" ui-sref="{{field.cwf}}" tooltip="Initiate Compliance Workflow">
-						                <i class="glyphicon glyphicon-cog"></i>
-						            </a>
 
 						            		    
 								    <a ng-if="profile[field.findex].isMCAInfo === 'Y'" class="btn" href="/#!" tooltip="Info fetched from MCA site">

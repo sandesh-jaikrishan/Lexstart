@@ -3,14 +3,18 @@
 angular.module('mean.lexstart').config(['$stateProvider',
     function($stateProvider) {
        $stateProvider
-        .state('lexstart example page', {
-            url: '/lexstart/example',
-            templateUrl: 'lexstart/views/index.html'
-        })
+        // .state('lexstart example page', {
+        //     url: '/lexstart/example',
+        //     templateUrl: 'lexstart/views/index.html'
+        // })
         .state('compliance',{
         	url: '/lexstart/compliance',
         	templateUrl: '/lexstart/views/compliance.html'
         })
+        .state('selectorg',{
+            url: '/lexstart/selectorg',
+            templateUrl: '/lexstart/views/selectorg.html'
+        })        
         .state('profile',{
             url: '/lexstart/profile',
             templateUrl: '/lexstart/views/profile.html'
@@ -35,9 +39,9 @@ angular.module('mean.lexstart').config(['$stateProvider',
             url: '/lexstart/uploadDocs',
             templateUrl: '/lexstart/views/uploadDocs.html'
         })
-        .state('doclist',{
-            url: '/lexstart/doclist',
-            templateUrl: '/lexstart/views/doclist.html'
+        .state('verifydocs',{
+            url: '/lexstart/verifydocs',
+            templateUrl: '/lexstart/views/verifydocs.html'
         })
         .state('tagdoc',{
             url: '/lexstart/tagdoc',

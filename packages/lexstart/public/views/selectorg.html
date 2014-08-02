@@ -1,0 +1,23 @@
+<div data-ng-controller="LexAdminController" data-ng-init="loadAllUserOrg()">
+	<div class="container">
+		<div class="col-md-10 col-md-offset-1">  
+				<div class="page-header">
+					<h1><span class="glyphicon glyphicon-tower"></span> Set Organization for Session</h1>
+				</div>
+				<table ng-table="tableParams" show-filter="true" class="table table-striped">
+  					<tbody>
+  					<tr data-ng-repeat="org in $data">
+	  					<td data-title="'Organization'" sortable="'name'" filter="{ 'org_name': 'text' }"> {{org.org_name}} </td>
+	  					<td data-title="'Incorporation Date'" sortable="'inc_dt'"> {{org.inc_dt}}</td>
+	  					<td data-title="'CIN'"> {{org.cin}}</td>
+	  					<td data-title="''"> 
+	  						<button type="button" class="btn btn-primary" ng-click="setOrgForSession(org)">
+		  						Set
+                    		</button>
+                    	</td>
+  					</tr>
+  					</tbody>
+				</table>
+    	</div>
+  	</div>
+</div>

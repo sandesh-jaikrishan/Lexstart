@@ -29,31 +29,37 @@ Lexstart.register(function(app, auth, database) {
         menu: 'main'
     });
    *****/
+    // Lexstart.menus.add({
+    //     title: 'Test',
+    //     link: 'test',
+    // //    roles: ['admin'],
+    //     menu: 'main'
+    // });
+
     Lexstart.menus.add({
-        title: 'Test',
-        link: 'test',
-    //    roles: ['admin'],
+        title: 'Select Org',
+        link: 'selectorg',
+        roles: ['lexuser','lexadmin'],
         menu: 'main'
     });
-
 
     Lexstart.menus.add({
         title: 'Profile',
         link: 'profile',
-        roles: ['lexuser'],
+        roles: ['lexuser','lexadmin'],
         menu: 'main'
     });
 	
-	Lexstart.menus.add({
-        title: 'Service Request',
-        link: 'svcrequest',
-        roles: ['lexuser'],
-        menu: 'main'
-    });
+	// Lexstart.menus.add({
+ //        title: 'Service Request',
+ //        link: 'svcrequest',
+ //        roles: ['lexuser'],
+ //        menu: 'main'
+ //    });
 
     Lexstart.menus.add({
-        title: 'Documents',
-        link: 'doclist',
+        title: 'Verify Docs',
+        link: 'verifydocs',
         roles: ['lexadmin'],
         menu: 'main'
     });
@@ -61,7 +67,7 @@ Lexstart.register(function(app, auth, database) {
     Lexstart.menus.add({
         title: 'Classification',
         link: 'admindocclass',
-       // roles: ['lexadmin'],
+        roles: ['lexadmin'],
         menu: 'main'
     });
 
@@ -81,16 +87,23 @@ Lexstart.register(function(app, auth, database) {
     });
 */
     Lexstart.menus.add({
-        title: 'Prospects',
+        title: 'Registrations',
         link: 'prospects',
-    //    roles: ['lexadmin'],
+        roles: ['lexadmin'],
         menu: 'main'
     });
 
+    // Lexstart.menus.add({
+    //     title: 'Registrations',
+    //     link: 'registrations',
+    // //    roles: ['lexadmin'],
+    //     menu: 'main'
+    // });
+
     Lexstart.menus.add({
-        title: 'Registrations',
-        link: 'registrations',
-    //    roles: ['lexadmin'],
+        title: 'Upload Docs',
+        link: 'uploadDocs',
+        roles: ['lexadmin'],
         menu: 'main'
     });
 

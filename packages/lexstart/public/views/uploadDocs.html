@@ -2,28 +2,32 @@
 	<div class="container">
 		<div class="col-md-10 col-md-offset-1">  
 			<div class="page-header">
-				<h1><span class="glyphicon glyphicon-upload"></span> Upload Docs for Company</h1>
+				<h2><span class="glyphicon glyphicon-upload"></span> Upload Docs - [{{org_name}}]</h2>
 			</div>
-			
-			<dl class="dl-horizontal">
+            
+            
+            
+            
+			<!-- <dl class="dl-horizontal">
   				<dt>Company Name</dt>
-  				<dd>Sangam Pvt Ltd</dd>
-			</dl> 		  
+  				<dd>{{org_name}}</dd>
+			</dl>  -->		  
 
-			<dl class="dl-horizontal">
+			<!-- <dl class="dl-horizontal">
   				<dt>CIN</dt>
-  				<dd>AZ1348760134Y</dd>
-			</dl>
+  				<dd>{{org_cin}}</dd>
+			</dl> -->
 
-			<div class="col-sm-12">
+			<!-- <div class="col-sm-12">
 			    <input id="companyfiles" class="custom-file-input" ng-file-select type="file" ptag-val="2" multiple/>
-			</div>	
+			</div>	 -->
 			
 		    <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th width="30%">Name</th>
-                                <th width="10%">Doc Class</th>
+                                <th width="200px">Doc Class</th>
+                                <th width="10%">Tag Doc</th>
                                 <th ng-show="uploader.isHTML5">Size</th>
                                 <th ng-show="uploader.isHTML5">Progress</th>
                                 <th>Status</th>
@@ -35,10 +39,9 @@
                                 <td><strong>{{item.file.name}}</strong></td>
                                 <td>
                                 	<!--ng-model="{{fileList[item.file.name].tagVal}}"-->
-                                    <select ng-model="item.selectedDocClass" ng-options="docClass.doc_mnemonic for docClass in docClassList">
+                                    <select ng-model="item.selectedDocClass" class="form-control" ng-options="docClass.doc_mnemonic for docClass in docClassList">
                                       <option value="">-- Select Doc Class --</option>
                                     </select>
-
 
                                 	<!-- <select class="form-control" ng-model="item.ptagVal">
 									    <option ng-repeat="ptag in ptags"
@@ -46,6 +49,8 @@
 									      {{ptag.name}}
 									    </option>
 									</select>    -->
+                                    </td>
+                                    <td>
                                      <button type="button" class="btn btn-primary btn-xs" ng-click="tagDoc(item)" ng-disabled="!item.selectedDocClass">
                                         <span class="glyphicon glyphicon-cog"></span> Tag Doc
                                     </button>
@@ -63,12 +68,12 @@
                                     <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
                                 </td>
                                 <td nowrap>
-                                    <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                                    <button type="button" class="btn btn-success btn-xs" ng-click="upload(item)" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
                                         <span class="glyphicon glyphicon-upload"></span> Upload
                                     </button>
-                                    <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                                    <!-- <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
                                         <span class="glyphicon glyphicon-ban-circle"></span> Cancel
-                                    </button>
+                                    </button> -->
                                     <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
                                         <span class="glyphicon glyphicon-trash"></span> Remove
                                     </button>
@@ -77,22 +82,28 @@
                         </tbody>
                     </table>
 
-                    <div>
-                        <p>
+                    <div class="row">
+                        <!-- <p>
                             Queue progress:
                             <div class="progress" style="">
                                 <div class="progress-bar" role="progressbar" ng-style="{ 'width': uploader.progress + '%' }"></div>
                             </div>
-                        </p>
-                        <button type="button" class="btn btn-success btn-s" ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length">
-                            <span class="glyphicon glyphicon-upload"></span> Upload all
-                        </button>
-                        <button type="button" class="btn btn-warning btn-s" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading">
-                            <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
-                        </button>
-                        <button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">
-                            <span class="glyphicon glyphicon-trash"></span> Remove all
-                        </button>
+                        </p> -->
+                        <div class="col-sm-4">
+                            <input id="companyfiles" class="custom-file-input" ng-file-select type="file" ptag-val="2" multiple/>
+                        </div>
+                        <div class="col-sm-12">
+
+                            <button type="button" class="btn btn-success btn-s" ng-click="uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length">
+                                <span class="glyphicon glyphicon-upload"></span> Upload all
+                            </button>
+                            <!-- <button type="button" class="btn btn-warning btn-s" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading">
+                                <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+                            </button> -->
+                            <button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">
+                                <span class="glyphicon glyphicon-trash"></span> Remove all
+                            </button>
+                        </div>    
                     </div>
 
                 </div>

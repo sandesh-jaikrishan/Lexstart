@@ -5,6 +5,7 @@
  */
 var mongoose = require('mongoose'),
     OrgMdl = mongoose.model('Org'),
+    OrganizationMdl = mongoose.model('organization'),
     OrgUsrLnkMdl = mongoose.model('lex_user_link'),
     userMdl = mongoose.model('User'),
     LexUsrLnkMdl = mongoose.model('lex_user_link');
@@ -60,8 +61,18 @@ exports.setUserOrg = function(req, res, next, id) {
  * Find Org by id
  */
 exports.getOrg = function(req, res, next) {
-    console.log('Server lexCtrl:getOrg');
-    res.jsonp(req.org);
+    console.log('Inside get Org');
+    var org_id=req.params.orgId;
+    console.log('Inside get Org',org_id);
+    OrganizationMdl.findOne({_id : org_id}).populate('reg_off_add_id').populate('key_contact_id').exec(function(err, _org) {
+        if (err) {
+            res.render('error', {status: 500});
+        } else {
+            res.jsonp({org : _org});
+        }
+    });
+
+    
 };
 
 /**
