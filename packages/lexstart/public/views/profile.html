@@ -3,10 +3,15 @@
 	    <form class="form">
 	      	<div class="row">
 			    <div class="col-md-10 col-md-offset-1">
+			    	<div class="page-header">
+						<h1><span class="glyphicon glyphicon-cog"></span> Profile - {{$root.org.org_name}}</h1>
+					</div>
 				    <accordion>
-				        <accordion-group ng-repeat="group in groups" >
+				        <accordion-group ng-repeat="group in groups" is-open="group.status.open">
 				      		<accordion-heading>
-			        			{{group.name}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+			        			{{group.name}} <i class="pull-right glyphicon" 
+			        							  ng-class="{'glyphicon-chevron-down': group.status.open, 
+			        							  			'glyphicon-chevron-right': !group.status.open}"></i>
 			        		</accordion-heading>			        		
 				      <!--Body content-->
 					      	  <div class="row form-group" ng-repeat="field in group.fields">
@@ -44,8 +49,6 @@
 						            </a>	
 					            </div>	   	   
 							  </div>
-						  
-					
 		    			</accordion-group>
 		  			</accordion>	  
 				</div>
@@ -166,7 +169,7 @@
 			  					<tr data-ng-repeat="doc in org.docs">
 				  					<td> {{doc.orig_file_name}} </i> </td>
 				  					<td> {{doc.doc_class_id.doc_name}} </td>
-				  					<td> {{doc.doc_date}} </td>
+				  					<td> {{doc.doc_date| date:'dd-MMM-yyyy'}} </td>
 				  					<td> {{doc.doc_class_id.purpose}} </td>
 				  					<td> {{doc.doc_class_id.doc_type}}</td>
 				  					<td> <a href="http://localhost:3000/lexstart/download/{{doc.file_name}}" target="_blank">View Doc</a></td>

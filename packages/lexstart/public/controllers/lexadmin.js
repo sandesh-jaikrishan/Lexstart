@@ -1,11 +1,314 @@
+
 'use strict';
 
 var app = angular.module('mean.lexstart');
 
 
 app.controller('LexConfigAdminController',
-function($scope,$rootScope, $location,$http, $timeout, $filter, Global,$log, $fileUploader, ngTableParams)
+function($scope,$timeout, $rootScope, $location,$http, $filter, Global,$log, $fileUploader, ngTableParams)
 {
+
+$scope.cancelActionMap = function() {
+	$location.path('/lexstart/admineventclass');
+};
+$scope.loadActionMapAdminForm = function() {
+	$scope.eventClass = Global.eventClass;
+
+	$scope.optionTypeList = [{name : '1956', id : 1},
+							 {name : '2013', id : 2},
+							 {name : 'Both', id : 3}
+							];
+
+	$http.get('/getActionMapForEvent/'+$scope.eventClass._id)
+		.success(function(data, status, headers, config) {
+			data.actionMapList.forEach(function(item){
+				console.log('Action Map',item);
+				item.actionType = item.legal_action_type_id;
+				item.legal_action_type_id = item.actionType._id;
+				$scope.optionTypeList.forEach(function(_opt){
+					console.log('Option',_opt);
+					if (_opt.id===item.option)
+					{
+						console.log('matched');
+						item.optionType = _opt;
+						console.log('Item',item);
+					}
+				});
+			});
+			$scope.actionMapList = data.actionMapList;			
+		}).error(function(data, status, headers, config) {
+			$scope.error = true;
+			$scope.errorList = ['Error fetching action type list '+ data.error];        				
+		});	
+
+	$http.get('/getActionTypeList')
+		.success(function(data, status, headers, config) {
+			$scope.actionTypeList = data.actionTypeList;			
+		}).error(function(data, status, headers, config) {
+			$scope.error = true;
+			$scope.errorList = ['Error fetching action type list '+ data.error];        				
+		});		
+
+};	
+
+$scope.saveActionMap = function(){
+	$scope.actionMapList.forEach(function(item){
+		item.legal_action_type_id = item.actionType._id;
+		item.option = item.optionType.id;
+	});
+
+	$http.post('/saveActionMap/',{actionMap : $scope.actionMapList, eventClassId : $scope.eventClass._id})
+		.success(function(data, status, headers, config) {
+			$location.path('/lexstart/admineventclass');			
+		}).error(function(data, status, headers, config) {
+			$scope.error = true;
+			$scope.errorList = ['Error saving action map '+ data.error];        				
+		});	
+
+};
+
+$scope.addActionMapRow = function() {
+	var actionMap = {
+     		legal_event_class_id : $scope.eventClass._id,
+			seq_no : $scope.actionMapList.length+1,
+			required : 'N',
+			optionType : {name : 'Both' , id : 3}
+     	};
+     	$scope.actionMapList.push(actionMap);  
+};
+
+$scope.setActionMapFlag = function(_actionMap,bool){
+	_actionMap.editFlag = bool;
+	$scope.error = false;
+
+
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///
+$scope.addEventActions = function(_eventClass){
+	Global.eventClass = _eventClass;
+	$location.path('/lexstart/adminactionmap');
+
+};
+var loadEventClassTable = function() {
+							 
+		$scope.eventClassTblParam  = new ngTableParams({
+				page: 1,            // show first page
+				count: 5,
+				sorting: {event_name : 'asc'},
+				filter: {event_name : '' }     
+			}, {
+				total: $scope.eventClassList.length,
+				counts :  [],// length of data
+				getData: function($defer, params) {
+					var orderedData = params.sorting() ? 
+									  $filter('orderBy')($scope.eventClassList, params.orderBy()) : $scope.eventClassList;
+
+					orderedData = params.filter() ?
+									 $filter('filter')(orderedData, params.filter()) : orderedData;	
+					console.log('orderedData', orderedData);
+	                   	
+					params.total(orderedData.length);		 			  
+
+					$defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+				}
+			});
+	};
+
+	$scope.deleteEventClass = function(_eventClass) {
+		
+	};
+
+	$scope.saveEventClass = function(_eventClass) {
+		$scope.errorList = [];
+		if (!_eventClass.eventType)
+		{
+			$scope.errorList.push('Event Type not selected.');
+		}
+		if (_eventClass.event_name === '<Event Name>')
+		{
+			$scope.errorList.push('Legal Event Name cannot be left blank.');
+		}
+		if (_eventClass.purpose === '<Purpose>')
+		{
+			$scope.errorList.push('Event Purpose cannot be left blank.');
+		}
+		if ($scope.errorList.length > 0)
+		{
+			$scope.error = true;
+			return;
+		}
+		_eventClass.event_type =  _eventClass.eventType.id;
+
+		$http.post('/saveEventClass',
+            		{eventClass : _eventClass}
+		).success(function(data, status, headers, config) {
+				console.log('success response');
+				_eventClass._id = data.eventClass._id;
+				$scope.responseMsg = 'Event Class '+ _eventClass.event_name + ' saved successfully.';    			
+		}).error(function(data, status, headers, config) {
+				$scope.error = true;
+				console.log('Error occured saving  Event Class '+ _eventClass.event_name);
+    			$scope.errorList = ['Error occurred saving  Event Class '+ _eventClass.event_name + '\n'+ data.errors]; 
+		});
+
+		$scope.setEventFlag(_eventClass,false);
+
+
+	} ;
+	
+	$scope.loadEventClassAdminForm = function() {
+		$scope.eventTypeList = [{name : 'Approval' , id : 1},
+							 {name : 'Intimation' , id : 2}];
+		
+		var _eventTypeList = $scope.eventTypeList;
+		$http.get('/geteventClassList')
+		.success(function(data, status, headers, config) {
+			console.log('success response', data);
+			data.eventClassList.forEach(function(item){
+				for (var i=0;i<_eventTypeList.length;i++)
+				{
+					var _eventType = _eventTypeList[i];
+					if (item.event_type === _eventType.id)
+					{
+						item.eventType = _eventType;
+					}
+				}
+			});
+			$scope.eventClassList = data.eventClassList;
+			console.log('Fetch list',$scope.eventClassList);
+			loadEventClassTable();
+		}).error(function(data, status, headers, config) {
+			console.log('error response');
+			$scope.error = true;
+			$scope.errorList = ['Error fetching action type list '+ data.error];        				
+		});	
+	};
+	
+	$scope.addEventClassRow = function() {
+     	var eventClass = {
+     		event_name : '<Event Name>',
+			purpose : '<Purpose>'
+     	};
+     	$scope.eventClassList.push(eventClass);     	
+     	$scope.eventClassTblParam.reload();
+     	
+    };
+
+	$scope.setEventFlag = function (_eventClass,bool){
+		$scope.error = false;
+		$scope.responseMsg = false;
+		_eventClass.editFlag = bool;
+	};
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var loadActTypeTable = function() {
+		$scope.actTypeTblParam  = new ngTableParams({
+				page: 1,            // show first page
+				count: 5,
+				sorting: {legal_action : 'asc'},
+				filter: {legal_action : '' }     
+			}, {
+				total: $scope.actionTypeList.length,
+				counts :  [],// length of data
+				getData: function($defer, params) {
+					var orderedData = params.sorting() ? 
+									  $filter('orderBy')($scope.actionTypeList, params.orderBy()) : $scope.actionTypeList;
+
+					orderedData = params.filter() ?
+									 $filter('filter')(orderedData, params.filter()) : orderedData;	
+					console.log('orderedData', orderedData);
+	                   	
+					params.total(orderedData.length);		 			  
+
+					$defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+				}
+			});
+	};
+
+	$scope.deleteActionType = function(_actionType) {
+		
+	};
+
+	$scope.saveActionType = function(_actionType) {
+		$scope.errorList = [];
+		if (!_actionType.docClass)
+		{
+			$scope.errorList.push('Document Class not selected.');
+		}
+		if (_actionType.legal_action === '<Legal Action>')
+		{
+			$scope.errorList.push('Legal Action Name cannot be left blank.');
+		}
+		if ($scope.errorList.length > 0)
+		{
+			$scope.error = true;
+			return;
+		}
+		_actionType.doc_class_id = _actionType.docClass._id;
+
+		$http.post('/saveActionType',
+            		{actionType : _actionType}
+		).success(function(data, status, headers, config) {
+				console.log('success response');
+				_actionType._id = data.actionType._id;
+				$scope.responseMsg = 'Action Type '+ _actionType.legal_action + ' saved successfully.';    			
+		}).error(function(data, status, headers, config) {
+				$scope.error = true;
+				console.log('Error occured saving  Action Type '+ _actionType.legal_action);
+    			$scope.errorList = ['Error occured saving  Action Type '+ _actionType.legal_action + '\n'+ data.errors]; 
+		});
+
+		$scope.setActionFlag(_actionType,false);
+
+
+	} ;
+	
+	$scope.loadActionTypeAdminForm = function() {
+
+		$http.get('/lexgetdocclasslist')
+			.success(function(data, status, headers, config) {
+				$scope.docClassList = data.docClassList;				
+		}).error(function(data, status, headers, config) {
+				$scope.error = true;
+				$scope.errorList = ['Error fetching doc class list '+ data.error];        				
+		});	
+
+		$http.get('/getActionTypeList')
+		.success(function(data, status, headers, config) {
+			console.log('success response', data);
+			$scope.actionTypeList = data.actionTypeList;
+			console.log('Fetch list',$scope.actionTypeList);
+			loadActTypeTable();
+		}).error(function(data, status, headers, config) {
+			console.log('error response');
+			$scope.error = true;
+			$scope.errorList = ['Error fetching action type list '+ data.error];        				
+		});	
+	};
+	
+	$scope.addActTypeRow = function() {
+     	var actType = {
+     		legal_action : '<Legal Action>',
+			doc_class_id : {}
+     	};
+     	//$scope.actTypeTblParam.reload();
+     	//$timeout($scope.actTypeTblParam.reload(),100);	
+     	//$scope.actTypeTblParam = {reload:function(){},settings:function(){return {}}};
+     	$scope.actionTypeList.push(actType);     	
+     	$scope.actTypeTblParam.reload();
+     	
+    };
+
+	$scope.setActionFlag = function (_actionType,bool){
+		$scope.error = false;
+		_actionType.editFlag = bool;
+	};
+
 	$scope.doc_type_list =  [{name :'eform' , value : '1' },
         					 {name :'Resolution' , value : '2' },
         					 {name :'Charter' , value : '3' },
@@ -271,7 +574,34 @@ function($scope,$rootScope, $location,$http, Global,$log, $fileUploader, ngTable
 	 };
 
 	 $scope.initTagDoc = function () {
-	 	$scope.selectedDocClassInst = Global.tagDocItem.selectedDocClassInst; 	
+	 	$scope.selectedDocClassInst = Global.tagDocItem.selectedDocClassInst; 
+
+	 	$scope.tagGroups = ['organization','address','shareholders','auditor','share_capital','Director'];
+	 	$scope.groupConfig = {	'organization' : {label : 'Organization', tags : []},
+	 							'address'  : {label : 'Address', tags : []},
+	 							'shareholders'   : {label : 'Shareholder', tags : []},
+	 							'auditor'  : {label : 'Auditor', tags : []},
+	 							'share_capital'  : {label : 'Share Capital', tags : []},
+	 							'Director'  : {label : 'Director', tags : []} 
+	 						 };
+	 	$scope.tagGroupsFound = [];
+	 						 
+	 	$scope.groupedTags = {} ;
+	 	$scope.tagGroups.forEach(function(group){
+			$scope.selectedDocClassInst.tags.forEach(function(item){
+				if (item.table_name === group)
+				{
+					if (!$scope.groupedTags[group])
+					{
+						$scope.groupedTags[group] = [];	
+						$scope.tagGroupsFound.push({group : group,groupName : $scope.groupConfig[group].label, status : false});
+					}
+					$scope.groupedTags[group].push(item);
+				}
+	 		});
+	 	});
+
+
 
 	 };
 	 $scope.upload = function (item) {
@@ -294,7 +624,7 @@ function($scope,$rootScope, $location,$http, Global,$log, $fileUploader, ngTable
 		});
 
 	 	//if (!Global.initUploadDocsForm || Global.curr_org_id !== Global.initUploadDocsForm.org_id)
-	 	if (!Global.initUploadDocsForm || Global.initUploadDocsForm.org._id !== $rootScope.org._id)	
+	 	if (!Global.initUploadDocsForm || !Global.initUploadDocsForm.org || Global.initUploadDocsForm.org._id !== $rootScope.org._id)	
 	 	{
 	 		
 	 		Global.initUploadDocsForm = {org:$rootScope.org};
@@ -413,7 +743,8 @@ app.controller('LexAdminController',
 			};
 
 			$scope.setOrgForSession = function(_org) {
-				$rootScope.org = _org;						
+				$rootScope.org = _org;
+				$location.path('/lexstart/profile');						
 			};
 
 	        $scope.getProspectTypeName = function(val) {

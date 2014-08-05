@@ -36,12 +36,12 @@ Lexstart.register(function(app, auth, database) {
     //     menu: 'main'
     // });
 
-    Lexstart.menus.add({
-        title: 'Select Org',
-        link: 'selectorg',
-        roles: ['lexuser','lexadmin'],
-        menu: 'main'
-    });
+    // Lexstart.menus.add({
+    //     title: 'Select Org',
+    //     link: 'selectorg',
+    //     roles: ['lexuser','lexadmin'],
+    //     menu: 'main'
+    // });
 
     Lexstart.menus.add({
         title: 'Profile',
@@ -65,11 +65,26 @@ Lexstart.register(function(app, auth, database) {
     });
 
     Lexstart.menus.add({
-        title: 'Classification',
+        title: 'Doc Class',
         link: 'admindocclass',
         roles: ['lexadmin'],
         menu: 'main'
     });
+
+    Lexstart.menus.add({
+        title: 'Legal Action',
+        link: 'adminactiontype',
+        roles: ['lexadmin'],
+        menu: 'main'
+    });
+
+    Lexstart.menus.add({
+        title: 'Event Class',
+        link: 'admineventclass',
+        roles: ['lexadmin'],
+        menu: 'main'
+    });
+    
 
     // Lexstart.menus.add({
     //     //title: 'Classification',
@@ -107,12 +122,12 @@ Lexstart.register(function(app, auth, database) {
         menu: 'main'
     });
 
-    Lexstart.menus.add({
-        title: 'Register Interest',
-        link: 'registerinterest',
-    //    roles: ['lexadmin'],
-        menu: 'main'
-    });
+    // Lexstart.menus.add({
+    //     title: 'Register Interest',
+    //     link: 'registerinterest',
+    // //    roles: ['lexadmin'],
+    //     menu: 'main'
+    // });
 
     Lexstart.aggregateAsset('css', 'lexstart.css');
 

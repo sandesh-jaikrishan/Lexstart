@@ -2,9 +2,15 @@
 	<div class="container">
 		<div class="col-md-10 col-md-offset-1">  
 				<div class="page-header">
-					<h1><span class="glyphicon glyphicon-user"></span>Verify Docs</h1>
+					<h1><span class="glyphicon glyphicon-ok-sign"></span>Verify Docs</h1>
 				</div>
-				<table class="table table-striped">
+
+				<div ng-hide="docs">
+					<h3>Loading data</h3>
+					<img ng-src="/packages/lexstart/public/assets/img/loading.jpg" style="margin:auto;">
+				</div>
+
+				<table ng-show="docs!== null" class="table table-striped">
   					<thead>
                     <tr>
     					<th>Name</th>
@@ -12,15 +18,14 @@
     					<th>Date</th>
     					<th>Select Action</th>
     					<th></th>
-    					
-
   					</tr>
   					</thead>
+
   					<tbody>
   					<tr data-ng-repeat="doc in docs">
 	  					<td> {{doc.orig_file_name}} </td>
 	  					<td> {{doc.doc_class_id.doc_name}} </td>
-	  					<td> {{doc.doc_date}} </td>
+	  					<td> {{doc.doc_date | date:'dd-MMM-yyyy'}} </td>
 	  					<td> 
                         	<!--ng-model="{{fileList[item.file.name].tagVal}}"-->
                         	<select class="form-control" ng-model="doc.action">
@@ -32,13 +37,8 @@
                         </td>
 	  					<td> 
 	  						<button type="button" class="btn btn-primary">
-		  						<a style="color:#fff" href="/#!/lexstart/tagdoc">
-	                        		<i class="glyphicon glyphicon-edit"></i>Edit Metadata
-	                    		</a>
-                    		</button>
-                    		<button type="button" class="btn btn-primary">
 		  						<a style="color:#fff" href="/#!/lexstart/initaction">
-	                        		<i class="glyphicon glyphicon-play"></i>Initiate Action
+	                        		<i class="glyphicon glyphicon-ok"></i> Verify
 	                    		</a>
                     		</button>
                     	</td>

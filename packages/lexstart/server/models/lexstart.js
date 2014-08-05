@@ -217,7 +217,7 @@ mongoose.model('legal_action_type', LegalActionTypeSchema);
 
 var LegalEventClassSchema = new Schema(
 {
-	legal_event_name  : {type: String,default: '',trim: true} ,
+	event_name  : {type: String,default: '',trim: true} ,
 	purpose : {type: String,default: '',trim: true} ,
 	event_type : {type: Number} // 'approval or intimation' 
 },
@@ -233,7 +233,7 @@ var EventActionMapSchema = new Schema(
 	legal_event_class_id : {type: Schema.Types.ObjectId, ref: 'legal_event_class' },
 	legal_action_type_id : {type: Schema.Types.ObjectId, ref: 'legal_action_type' },
 	seq_no : {type: Number},
-	option : {type: String,default: 'both',trim: true} , // default 'both' 
+	option : {type: Number} , // default 'both' 
 	required : {type: String,default: 'n',trim: true} // default 'n' 
 },
 {

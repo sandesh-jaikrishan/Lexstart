@@ -55,6 +55,18 @@ angular.module('mean.lexstart').config(['$stateProvider',
             url: '/lexstart/admindocclass',
             templateUrl: '/lexstart/views/admindocclass.html'
         })
+        .state('adminactiontype',{
+            url: '/lexstart/adminactiontype',
+            templateUrl: '/lexstart/views/adminactiontype.html'
+        })  
+        .state('admineventclass',{
+            url: '/lexstart/admineventclass',
+            templateUrl: '/lexstart/views/admineventclass.html'
+        }) 
+        .state('adminactionmap',{
+            url: '/lexstart/adminactionmap',
+            templateUrl: '/lexstart/views/adminactionmap.html'
+        })        
         .state('admineditdocclass',{
             url: '/lexstart/admineditdocclass',
             templateUrl: '/lexstart/views/admineditdocclass.html'

@@ -2,7 +2,7 @@
 	<div class="container">
 		<div class="col-md-10 col-md-offset-1">  
 				<div class="page-header">
-					<h1><span class="glyphicon glyphicon-cog"></span> Manage Action Types</h1>
+					<h1><span class="glyphicon glyphicon-cog"></span>Manage Action Types</h1>
 				</div>
 
         <div class="alert alert-success animated fadeIn" ng-show="responseMsg" role="alert">{{responseMsg}}</div>
@@ -13,20 +13,44 @@
         </div>
         <table ng-table="actTypeTblParam" show-filter="true" class="table table-striped">
   					<tbody data-ng-repeat="actionType in $data">
-  					<tr>
-	  					<td><input type="checkbox" ng-model="actionType.selected"> </td>
-              <td data-title="'Action Type'" sortable="'legal_action'" filter="{ 'legal_action': 'text' }"> 
-                {{actionType.legal_action}}
-              </td>
-	  					<td data-title="'Linked Document'">
-                {{actionType.doc_class_id.doc_mnemonic}}
-              </td>
-              <td data-title="''"> 
-                 <button type="button" class="btn btn-primary" id="setEditClass{{docClass._id}}" style="width:75px;" ng-click="setEditClass(docClass)">
-                        <i class="glyphicon glyphicon-edit"></i>Edit                     
-                 </button>                
-              </td>
-  					</tr>           
+    					<tr ng-show="!actionType.editFlag">
+  	  					<td><input type="checkbox" ng-model="actionType.selected"> </td>
+                <td data-title="'Action Type'" sortable="'legal_action'" filter="{ 'legal_action': 'text' }"> 
+                  {{actionType.legal_action}}
+                </td>
+  	  					<td data-title="'Linked Document'">
+                  {{actionType.docClass.doc_mnemonic}}
+                </td>
+                <td data-title="''"> 
+                   <button type="button" class="btn btn-primary" style="width:75px;" 
+                           ng-click="setActionFlag(actionType,true)">
+                          <i class="glyphicon glyphicon-edit"></i>Edit                     
+                   </button>                
+                   <button type="button" class="btn btn-primary" style="width:75px;" 
+                           ng-click="deleteActionType(actionType)">
+                          <i class="glyphicon glyphicon-delete"></i>Delete                     
+                   </button>
+                </td>
+    					</tr>  
+              <tr ng-show="actionType.editFlag">
+                <td></td>
+                <td> 
+                  <input type="text" class="form-control" ng-model="actionType.legal_action" value="{{actionType.legal_action}}">
+                </td>
+                <td>
+                  <select class="form-control" ng-model="actionType.docClass" ng-options="docClass.doc_mnemonic for docClass in docClassList" />
+                </td>
+                <td data-title="''"> 
+                    <button type="button" class="btn btn-primary" style="width:75px;" 
+                           ng-click="saveActionType(actionType)">
+                          <i class="glyphicon glyphicon-save"></i>Save                     
+                   </button>  
+                   <button type="button" class="btn btn-primary" style="width:75px;" 
+                           ng-click="setActionFlag(actionType,false)">
+                          <i class="glyphicon glyphicon-cancel"></i>Cancel                     
+                   </button>         
+                </td>
+              </tr>           
   					</tbody>
 				</table>
     	</div>
@@ -34,12 +58,9 @@
     	<div class="col-md-10 col-md-offset-1">
 			  <div class="row">
 			    <div class="col-md-3" >
-			     	<button type="button" class="btn btn-primary" ng-click="addDocClassRow()">
-  						      		<i class="glyphicon glyphicon-plus"></i>Add
-            </button>
-            <button type="button" class="btn btn-primary">
-  						<i class="glyphicon glyphicon-trash"></i>Delete                		
-            </button>
+			     	<button type="button" class="btn btn-primary" ng-click="addActTypeRow()">
+  						    <i class="glyphicon glyphicon-plus"></i>Add
+            </button>            
           </div>
         </div>		
 		</div>			

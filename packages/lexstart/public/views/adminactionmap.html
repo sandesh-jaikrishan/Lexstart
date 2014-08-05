@@ -1,0 +1,95 @@
+<div data-ng-controller="LexConfigAdminController" data-ng-init="loadActionMapAdminForm()">
+	<div class="container">
+		<div class="col-md-10 col-md-offset-1">  
+				<div class="page-header">
+					<h1><span class="glyphicon glyphicon-cog"></span>Manage Event Action Map</h1>
+				</div>
+
+        <div class="alert alert-success animated fadeIn" ng-show="responseMsg" role="alert">{{responseMsg}}</div>
+          
+
+        <div ng-if="error" ng-repeat="err in errorList">
+            <div class="alert alert-danger" role="alert">{{err}}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2"><label class="control-label">Event Name:</label></div>
+            <div class="col-md-3"><input type="text" class="form-control" ng-model="eventClass.event_name" value="{{eventClass.event_name}}" disabled></div>
+            <div class="col-md-2"><label class="control-label">Purpose :</label></div>
+            <div class="col-md-3"><input type="text" class="form-control" ng-model="eventClass.purpose" value="{{eventClass.purpose}}" disabled></div>
+        </div> 
+
+        <div class="row">
+            <table style="" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Sequence</th>
+                  <th>Action</th>
+                  <th>Option</th>
+                  <th>Required</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody data-ng-repeat="actionMap in actionMapList">
+                  <tr>
+                      <td style="width:10px;">
+                          <input type="text" class="form-control" ng-model="actionMap.seq_no" ng-disabled="!actionMap.editFlag">
+                      </td>
+                      <td>
+                        <input type="text" class="form-control" ng-model="actionMap.actionType.legal_action" ng-show="!actionMap.editFlag" disabled/>
+                        <select ng-model="actionMap.actionType" class="form-control" ng-show="actionMap.editFlag" ng-options="actionType.legal_action for actionType in actionTypeList"/>
+                      </td>
+                      <td>
+                        <input type="text" class="form-control" ng-model="actionMap.optionType.name" ng-show="!actionMap.editFlag" disabled/>
+                        <select ng-model="actionMap.optionType" class="form-control" ng-show="actionMap.editFlag" ng-options="optionType.name for optionType in optionTypeList"/>
+                      </td>                      
+                      <td>
+                          <input type="checkbox" ng-model="actionMap.required" ng-true-value="Y" ng-false-value="N" ng-disabled="!actionMap.editFlag">
+                      </td>
+                      <td > 
+                        <button type="button" class="btn btn-primary" style="width:75px;" 
+                                 ng-show="!actionMap.editFlag" ng-click="moveUp(actionMap)">
+                                <i class="glyphicon glyphicon-arrow-up"></i>Up                     
+                         </button>  
+                         <button type="button" class="btn btn-primary" style="width:75px;" 
+                                 ng-show="!actionMap.editFlag" ng-click="moveDown(actionMap)">
+                                <i class="glyphicon glyphicon-arrow-down"></i>Down                     
+                         </button> 
+                         <button type="button" class="btn btn-primary" style="width:75px;" 
+                                 ng-show="!actionMap.editFlag" ng-click="setActionMapFlag(actionMap,true)">
+                                <i class="glyphicon glyphicon-edit"></i>Edit                     
+                         </button> 
+                         <!-- <button type="button" class="btn btn-primary" style="width:75px;" 
+                                 ng-show="actionMap.editFlag" ng-click="saveActionMap(actionMap)">
+                                <i class="glyphicon glyphicon-save"></i>Save                     
+                         </button> -->
+                         <button type="button" class="btn btn-primary" style="width:75px;" 
+                                 ng-show="actionMap.editFlag" ng-click="setActionMapFlag(actionMap,false)">
+                                <i class="glyphicon glyphicon-ban-ok"></i>Record                     
+                         </button>        
+
+                      </td>
+                  </tr>
+              </tbody>
+            </table>                  
+        </div>
+        
+    	</div>
+
+    	<div class="col-md-10 col-md-offset-1">
+			  <div class="row">
+			    <div class="col-md-5" >
+			     	<button type="button" style="width:75px;" class="btn btn-primary" ng-click="addActionMapRow()">
+  						    <i class="glyphicon glyphicon-plus"></i>Add
+            </button>
+            <button type="button" style="width:75px;" class="btn btn-primary" ng-click="saveActionMap()">
+                  <i class="glyphicon glyphicon-save"></i>Save
+            </button> 
+            <button type="button" style="width:75px;" class="btn btn-primary" ng-click="cancelActionMap()">
+                  <i class="glyphicon glyphicon-save"></i>Cancel
+            </button>            
+          </div>
+        </div>		
+		</div>			
+  	</div>
+</div>

@@ -4,17 +4,14 @@
 	      	<div class="row">
 			    <div class="col-md-10 col-md-offset-1">
 				    <accordion>
-				    	<accordion-group ng-repeat="tagGroup in tagGroupsFound" is-open="tagGroup.status.open">
-				      		<accordion-heading >
-			        			{{tagGroup.groupName}} Tags <i class="pull-right glyphicon" 
-			        							  ng-class="{'glyphicon-chevron-down': tagGroup.status.open, 
-			        							  			'glyphicon-chevron-right': !tagGroup.status.open}"></i>
+				        <accordion-group is-open="1==1">
+				      		<accordion-heading>
+			        			Tag Document Attributes 
 			        		</accordion-heading>			        		
 				      <!--Body content-->
-					      	  <div class="row form-group" ng-repeat="tag in groupedTags[tagGroup.group]">
+					      	  <div class="row form-group" ng-repeat="tag in selectedDocClassInst.tags">
 					      	  	<div class="col-md-3" >
-						      	  	<!-- <label class="control-label">{{tag.table_name}}.{{tag.attribute_name}}</label>	 -->
-						      	  	<label class="control-label">{{tag.attribute_name}}</label>	
+						      	  	<label class="control-label">{{tag.table_name}}.{{tag.attribute_name}}</label>	
 							    </div>	      
 							    <div class="col-md-5" >
 							    	<input type="text" class="form-control" ng-model="tag.value" ng-required="true"/>

@@ -95,11 +95,19 @@ angular
             		console.info('After adding a file::', event, event.currentScope , event.targetScope, item);
         		});
 
-	        };	        
+	        };	
+
+	                
 
 	        $scope.loadProfile = function() {
+	   //      	$scope.status = {
+			 //    	// isFirstOpen: true,
+			 //    	// isFirstDisabled: false,
+			 //    	open : true
+				// };
+
 	        	$scope.comp = {};
-	        	$scope.status = {open : true};
+	        	//$scope.status = {open : true};
 	        	$scope.org = {};
 	        					
 				$http.get('/org/'+$rootScope.org._id

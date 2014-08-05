@@ -1,8 +1,8 @@
-<div data-ng-controller="LexConfigAdminController" data-ng-init="loadEventClass()">
+<div data-ng-controller="LexConfigAdminController" data-ng-init="loadEventClassAdminForm()">
 	<div class="container">
 		<div class="col-md-10 col-md-offset-1">  
 				<div class="page-header">
-					<h1><span class="glyphicon glyphicon-cog"></span> Manage Event Classification</h1>
+					<h1><span class="glyphicon glyphicon-cog"></span>Manage Event Classification</h1>
 				</div>
 
         <div class="alert alert-success animated fadeIn" ng-show="responseMsg" role="alert">{{responseMsg}}</div>
@@ -11,28 +11,50 @@
         <div ng-if="error" ng-repeat="err in errorList">
             <div class="alert alert-danger" role="alert">{{err}}</div>
         </div>
-        <table ng-table="eventTblParam" show-filter="true" class="table table-striped">
+        <table ng-table="eventClassTblParam" show-filter="true" class="table table-striped">
   					<tbody data-ng-repeat="eventClass in $data">
-  					<tr>
-	  					<td><input type="checkbox" ng-model="eventClass.selected"> </td>
-              <td data-title="'Mnemonic'" sortable="'doc_mnemonic'" filter="{ 'doc_mnemonic': 'text' }"> 
-                  {{docClass.doc_mnemonic}}
-              </td>
-	  					<td data-title="'Name'">
-                {{docClass.doc_name}}
-              </td>
-              <td data-title="'Type'">
-                {{docClass.doc_type}}
-              </td>
-              <td data-title="'Purpose'">
-                {{docClass.purpose}}
-              </td>              
-	  					<td data-title="''"> 
-                 <button type="button" class="btn btn-primary" id="setEditClass{{docClass._id}}" style="width:75px;" ng-click="setEditClass(docClass)">
-                        <i class="glyphicon glyphicon-edit"></i>Edit                     
-                 </button>                
-              </td>
-  					</tr>           
+    					<tr ng-show="!eventClass.editFlag">
+  	  					<td data-title="'Event Name'" sortable="'event_name'" filter="{ 'event_name': 'text' }"> 
+                  {{eventClass.event_name}}
+                </td>
+  	  					<td data-title="'Purpose'">
+                  {{eventClass.purpose}}
+                </td>
+                <td data-title="'Type'">
+                  {{eventClass.eventType.name}}
+                </td>
+                <td data-title="''"> 
+                   <button type="button" class="btn btn-primary" style="width:90px;" 
+                           ng-click="setEventFlag(eventClass,true)">
+                          <i class="glyphicon glyphicon-edit"></i> Edit                     
+                   </button>                
+                   <button type="button" class="btn btn-primary" style="width:90px;" 
+                           ng-click="addEventActions(eventClass)" ng-disabled="!eventClass._id">
+                          <i class="glyphicon glyphicon-cog"></i> Configure                     
+                   </button>
+                </td>
+    					</tr>  
+              <tr ng-show="eventClass.editFlag">
+                <td> 
+                  <input type="text" class="form-control" ng-model="eventClass.event_name" value="{{eventClass.event_name}}">
+                </td>
+                <td> 
+                  <input type="text" class="form-control" ng-model="eventClass.purpose" value="{{eventClass.purpose}}">
+                </td>
+                <td>
+                  <select class="form-control" ng-model="eventClass.eventType" ng-options="eventType.name for eventType in eventTypeList" />
+                </td>
+                <td data-title="''"> 
+                    <button type="button" class="btn btn-primary" style="width:90px;" 
+                           ng-click="saveEventClass(eventClass)">
+                          <i class="glyphicon glyphicon-save"></i> Save                     
+                   </button>  
+                   <button type="button" class="btn btn-primary" style="width:90px;" 
+                           ng-click="setEventFlag(eventClass,false)">
+                          <i class="glyphicon glyphicon-ban-circle"></i> Cancel                     
+                   </button>         
+                </td>
+              </tr>           
   					</tbody>
 				</table>
     	</div>
@@ -40,12 +62,9 @@
     	<div class="col-md-10 col-md-offset-1">
 			  <div class="row">
 			    <div class="col-md-3" >
-			     	<button type="button" class="btn btn-primary" ng-click="addDocClassRow()">
-  						      		<i class="glyphicon glyphicon-plus"></i>Add
-            </button>
-            <button type="button" class="btn btn-primary">
-  						<i class="glyphicon glyphicon-trash"></i>Delete                		
-            </button>
+			     	<button type="button" style="width:90px;" class="btn btn-primary" ng-click="addEventClassRow()">
+  						    <i class="glyphicon glyphicon-plus"></i> Add
+            </button>            
           </div>
         </div>		
 		</div>			

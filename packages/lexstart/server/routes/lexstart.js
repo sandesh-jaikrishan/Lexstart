@@ -21,7 +21,27 @@ module.exports = function(Lexstart, app, auth, database) {
         .get(lexadminctrl.loadAllUserOrg);  
 
     app.route('/lexgetdocclasslist')
-        .get(lexadminctrl.getDocClassList);   
+        .get(lexadminctrl.getDocClassList);
+
+    app.route('/getActionTypeList')
+        .get(lexadminctrl.getActionTypeList);     
+    
+    app.route('/saveActionType')
+        .post(lexadminctrl.saveActionType);  
+
+    app.route('/getActionMapForEvent/:eventClassId')
+        .get(lexadminctrl.getActionMapForEvent);  
+
+    app.route('/saveActionMap')
+        .post(lexadminctrl.saveActionMap);       
+
+
+    app.route('/getEventClassList')
+        .get(lexadminctrl.getEventClassList);     
+    
+    app.route('/saveEventClass')
+        .post(lexadminctrl.saveEventClass);        
+            
 
     app.route('/lexgetorgdoclist/:orgId')
         .get(lexadminctrl.getOrgDocList);     

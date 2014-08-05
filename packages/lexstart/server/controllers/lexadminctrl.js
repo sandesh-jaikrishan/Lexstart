@@ -23,6 +23,9 @@ var mongoose = require('mongoose'),
     DocTagModel = mongoose.model('doc_tags'),
     DocClassTagsMdl = mongoose.model('doc_class_tags'),
     AttributeMdl = mongoose.model('attribute'),
+    ActionTypeMdl = mongoose.model('legal_action_type'),
+    EventClassMdl = mongoose.model('legal_event_class'),
+    EventActionMapMdl = mongoose.model('event_action_map'),
     LexUsrLnkMdl = mongoose.model('lex_user_link');
 
 var config = require('meanio').loadConfig();    
@@ -30,6 +33,40 @@ var nodemailer = require('nodemailer'),
     templates = require('../template'),
     async = require('async');  
 
+
+exports.getActionMapForEvent = function(req,res){
+    var _eventClassId=req.params.eventClassId;
+
+    EventActionMapMdl.find({legal_event_class_id:_eventClassId}).populate('legal_action_type_id').exec(function(err, _actionMapList) {
+        if (err) {
+            res.render('error', {status: 500});
+        } else {
+            res.jsonp({actionMapList : _actionMapList});
+        }
+    });
+
+};
+
+exports.saveActionMap = function(req,res){
+    var actionMap=req.body.actionMap;
+    var _eventClassId=req.body.eventClassId;
+
+    EventActionMapMdl.remove({legal_event_class_id : _eventClassId}).exec(function(err) {
+        if (err) {res.render('error update action map', {status: 500});}
+
+        EventActionMapMdl.create(actionMap, function(err, _actionMap) {
+            if (err) {
+                res.render('error', {status: 500});
+            } else {
+                res.status(200).send('Ok');
+            }
+        });
+
+    });
+
+    
+
+};
 
 exports.loadAllUserOrg = function(req,res) {
     var _username=req.params.username;
@@ -111,7 +148,6 @@ exports.downloadDocs = function(req, res) {
 exports.uploadDocs = function(req, res, next) {
         console.log('data posted via upload form');
         var _uploadDir = 'C:\\temp\\lexstart';
-
 
         async.waterfall([
                     // Get Doc Class Address
@@ -280,11 +316,65 @@ exports.getDocClassList_old = function(req,res,next) {
     });
 };
 
+
+
+exports.getActionTypeList = function(req,res,next) {
+    console.log('Inside getActionTypeList');
+    
+     ActionTypeMdl.find().populate('doc_class_id').exec(function(err, _actionTypeList) {
+        if (err) {
+            res.render('error', {status: 500});
+        } else {
+            var str = JSON.stringify(_actionTypeList);
+            _actionTypeList = JSON.parse(str);
+            _actionTypeList.forEach(function(item){                
+                item.docClass = item.doc_class_id;
+                item.doc_class_id = item.docClass._id;
+            });
+            res.jsonp({actionTypeList : _actionTypeList});
+        }
+        
+     });
+                   
+};
+
+exports.saveActionType = function(req,res) {
+
+    var actType = new ActionTypeMdl(req.body.actionType);
+    actType.save(function(err, _actionType) {
+        if (err) { console.log('Error saving action Type ',err); res.render('error', {status: 500});}        
+        console.log('Saved action Type successfully', _actionType);                                
+        res.jsonp({actionType : _actionType});   
+    });
+};
+
+exports.getEventClassList = function(req,res,next) {
+    console.log('Inside getEventClassList');    
+     EventClassMdl.find().exec(function(err, _eventClassList) {
+        if (err) {
+            res.render('error', {status: 500});
+        } else {
+            res.jsonp({eventClassList : _eventClassList});
+        }
+        
+     });
+                   
+};
+
+exports.saveEventClass = function(req,res) {
+    var eventClass = new EventClassMdl(req.body.eventClass);
+    eventClass.save(function(err, _eventClass) {
+        if (err) { console.log('Error saving event Class ',err); res.render('error', {status: 500});}        
+        console.log('Saved Event Class successfully', _eventClass);                                
+        res.jsonp({eventClass : _eventClass});   
+    });
+};
+
 exports.getDocClassList = function(req,res,next) {
     console.log('Inside getAllDocClassWithAttrList');
 
     async.waterfall([
-                    // Get Doc Class Address
+                    // Get Doc Class 
                     function(callback){
                          DocClassMdl.find().exec(function(err, docClassList) {
                             if (err) { console.log('Error completing operation',err); return callback(err);}
@@ -293,6 +383,7 @@ exports.getDocClassList = function(req,res,next) {
                          });
 
                     },
+                    // Fetch attribute details 
                     function(docClassList, callback){
                         DocClassTagsMdl.find().populate('attribute_id').exec(function(err, docTagList) {
                         if (err) { console.log('Error completing operation',err); return callback(err);}
@@ -300,7 +391,8 @@ exports.getDocClassList = function(req,res,next) {
                                 callback(null,docClassList, docTagList);
                          });
                     }
-                    ],    
+                    ],   
+                    // Merge Doc class & attribute details 
                     function(err, docClassList, docTagList) {
                         if (err) return res.status(400).send({errors: err.errors});
                         var str = JSON.stringify(docTagList);
